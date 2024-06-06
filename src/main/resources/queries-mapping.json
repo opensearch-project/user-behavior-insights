@@ -1,0 +1,15 @@
+{
+  "dynamic": false,
+  "properties": {
+    "timestamp": { "type": "date" },
+    "query_id": { "type": "keyword", "ignore_above": 100 },
+    "query": { "type": "text" },
+    "query_response_id": { "type": "keyword", "ignore_above": 100 },
+    "query_response_hit_ids": { "type": "keyword" },
+    "user_query": { "type": "text",
+      "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+    },
+    "query_attributes": { "type": "flat_object" },
+    "client_id": { "type": "keyword", "ignore_above": 100 }
+  }
+}

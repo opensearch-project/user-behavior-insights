@@ -1,0 +1,87 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'opensearch.opensearchplugin'
+apply plugin: 'opensearch.yaml-rest-test'
+apply plugin: 'maven-publish'
+
+opensearchplugin {
+    name 'opensearch-ubi'
+    description 'OpenSearch User Behavior Insights Plugin'
+    classname 'org.opensearch.ubi.UbiPlugin'
+    licenseFile rootProject.file('LICENSE')
+    noticeFile rootProject.file('NOTICE')
+}
+
+group = 'org.opensearch'
+version = "${ubiVersion}"
+
+// disabling some unnecessary validations for this plugin
+testingConventions.enabled = false
+loggerUsageCheck.enabled = false
+validateNebulaPom.enabled = false
+
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "https://aws.oss.sonatype.org/content/repositories/snapshots" }
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+
+    dependencies {
+        classpath "org.opensearch.gradle:build-tools:${opensearchVersion}"
+    }    
+}
+
+repositories {
+    mavenLocal()
+    maven { url "https://aws.oss.sonatype.org/content/repositories/snapshots" }
+    mavenCentral()
+    maven { url "https://plugins.gradle.org/m2/" }
+}
+
+thirdPartyAudit.enabled = false
+
+dependencies {
+    runtimeOnly "org.apache.logging.log4j:log4j-core:${versions.log4j}"
+    api "com.fasterxml.jackson.core:jackson-annotations:${versions.jackson}"
+    api "com.fasterxml.jackson.core:jackson-databind:${versions.jackson_databind}"
+    api "org.apache.httpcomponents:httpcore:${versions.httpcore}"
+    api "org.apache.httpcomponents:httpclient:${versions.httpclient}"
+    api "commons-logging:commons-logging:${versions.commonslogging}"
+    yamlRestTestImplementation "org.apache.logging.log4j:log4j-core:${versions.log4j}"
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "Snapshots"
+            url = "https://aws.oss.sonatype.org/content/repositories/snapshots"
+            credentials {
+                username "$System.env.SONATYPE_USERNAME"
+                password "$System.env.SONATYPE_PASSWORD"
+            }
+        }
+    }
+    publications {
+        pluginZip(MavenPublication) { publication ->
+            pom {
+                name = "opensearch-ubi"
+                description = "OpenSearch User Behavior Insights plugin"
+                groupId = "org.opensearch.plugin"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        name = "OpenSearch"
+                        url = "https://github.com/opensearch-project/user-behavior-insights"
+                    }
+                }
+            }
+        }
+    }
+}

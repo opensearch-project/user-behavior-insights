@@ -1,0 +1,60 @@
+services:
+
+  dataprepper-dev-os:
+    depends_on:
+      - ubi-dev-os
+    container_name: dataprepper
+    image: opensearchproject/data-prepper:2.8.0
+    ports:
+      - 4900:4900
+      - 2021:2021
+    volumes:
+      - ./dataprepper/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
+      - ./dataprepper/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml 
+    networks:
+      - ubi-dev-os-net
+
+  ubi-dev-os:
+    build: ./
+    container_name: ubi-dev-os 
+    environment:
+      discovery.type: single-node
+      node.name: opensearch
+      plugins.security.disabled: "true"
+      logger.level: info
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: SuperSecretPassword_123
+      #ubi.dataprepper.url: "http://dataprepper-dev-os:2021/log/ingest"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - 9200:9200
+      - 9600:9600
+    expose:
+      - 9200
+      - 9600
+    networks:
+      - ubi-dev-os-net
+
+#  ubi-dev-os-dashboards:
+#    image: opensearchproject/opensearch-dashboards:2.12.0
+#    container_name: ubi-dev-os-dashboards
+#    ports:
+#      - 5601:5601
+#    expose:
+#      - 5601
+#    environment:
+#      OPENSEARCH_HOSTS: '["http://ubi-dev-os:9200"]'
+#      DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"
+#    depends_on:
+#      - ubi-dev-os
+#    networks:
+#      - ubi-dev-os-net
+
+networks:
+  ubi-dev-os-net:
+    driver: bridge
