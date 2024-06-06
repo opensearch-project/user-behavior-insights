@@ -1,0 +1,24 @@
+name: Build and Test
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+        jdk: [ 11, 17, 21 ]
+        experimental: [false]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK ${{ matrix.jdk }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.jdk }}
+          cache: gradle
+      - name: Assemble target plugin
+        uses: gradle/gradle-build-action@v3
+        with:
+          cache-disabled: true
+          arguments: -Dtests.security.manager=false assemble

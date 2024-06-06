@@ -1,0 +1,8 @@
+grant {
+  // Jackson de/serialization
+  permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+  permission java.lang.RuntimePermission "accessDeclaredMembers";
+
+  // Connecting to Data Prepper
+  permission java.net.SocketPermission "*", "connect,resolve";
+};
