@@ -36,7 +36,7 @@
             "description": { "type": "text",
               "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
             },
-            "object_detail": { "type": "flat_object" }
+            "object_detail": { "type": "object" }
           }
         }
       }
