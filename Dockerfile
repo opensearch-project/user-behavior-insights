@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 FROM opensearchstaging/opensearch:2.15.0
+=======
+FROM opensearchproject/opensearch:2.15.0
+>>>>>>> Stashed changes
 
 COPY ./build/distributions/opensearch-ubi-2.15.0.0.zip /tmp/
 
