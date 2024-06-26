@@ -18,4 +18,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Security
 
-[Unreleased 2.x]: https://github.com/opensearch-project/user-behavior-insights/compare/2.14...2.x
+[2.15]: https://github.com/opensearch-project/user-behavior-insights/compare/2.15...2.x
+
+### Added
+* Adds support for OpenSearch 2.15
+
+### Dependencies
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+[2.14]: https://github.com/opensearch-project/user-behavior-insights/compare/2.14...2.x
+
+### Added
+* Supports OpenSearch 2.14
+
+### Dependencies
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
