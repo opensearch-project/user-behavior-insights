@@ -33,7 +33,7 @@ The `scripts/` directory contains example UBI requests for common use cases.
 To get started, download the plugin zip file from the [releases](https://github.com/o19s/opensearch-ubi/releases). Next, install the plugin into OpenSearch with the following command:
 
 ```
-bin/opensearch-plugin install file:/opensearch-ubi-1.0.0-os2.14.0.zip
+bin/opensearch-plugin install file:/opensearch-ubi-1.0.0-os2.15.0.zip
 ```
 
 You will be prompted while installing the plugin beacuse the plugin defines additional security permissions. These permissions allow the plugin to serialize query requests to JSON for storing and to allow the plugin to send query requests to Data Prepper. You can skip the prompt by adding the `--batch` argument to the above command.
@@ -55,7 +55,7 @@ curl -s http://localhost:9200/ecommerce/_search -H "Content-Type: application/js
  }'
 ```
 
-These indexes can also be created manually by using the [mapping files](https://github.com/o19s/opensearch-ubi/tree/2.14.0/src/main/resources):
+These indexes can also be created manually by using the [mapping files](https://github.com/opensearch-project/user-behavior-insights/tree/2.15/src/main/resources):
 
 ```
 curl -s -X PUT "http://localhost:9200/ubi-events" -H "Content-Type: application/json" --data-binary @/path/to/events-mapping.json
