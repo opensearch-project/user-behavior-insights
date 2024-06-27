@@ -20,7 +20,7 @@ For details on the JSON Schema used by UBI to send and receive queries and event
 ## Getting Help
 
 * For questions or help getting started, please find us in the [OpenSearch Slack](https://opensearch.org/slack.html) in the `#plugins` channel.
-* For bugs or feature requests, please create [a new issue](https://github.com/o19s/opensearch-ubi/issues/new/choose).
+* For bugs or feature requests, please create [a new issue](https://github.com/opensearch-project/user-behavior-insights/issues/new/choose).
 
 ## Useful Commands
 
@@ -30,10 +30,10 @@ The `scripts/` directory contains example UBI requests for common use cases.
 
 ### Installing the Plugin
 
-To get started, download the plugin zip file from the [releases](https://github.com/o19s/opensearch-ubi/releases). Next, install the plugin into OpenSearch with the following command:
+To get started, download the plugin zip file from the [releases](https://github.com/opensearch-project/user-behavior-insights/releases). Next, install the plugin into OpenSearch with the following command:
 
 ```
-bin/opensearch-plugin install file:/opensearch-ubi-1.0.0-os2.14.0.zip
+bin/opensearch-plugin install file:/opensearch-ubi-1.0.0-os2.15.0.zip
 ```
 
 You will be prompted while installing the plugin beacuse the plugin defines additional security permissions. These permissions allow the plugin to serialize query requests to JSON for storing and to allow the plugin to send query requests to Data Prepper. You can skip the prompt by adding the `--batch` argument to the above command.
@@ -55,7 +55,7 @@ curl -s http://localhost:9200/ecommerce/_search -H "Content-Type: application/js
  }'
 ```
 
-These indexes can also be created manually by using the [mapping files](https://github.com/o19s/opensearch-ubi/tree/2.14.0/src/main/resources):
+These indexes can also be created manually by using the [mapping files](https://github.com/opensearch-project/user-behavior-insights/tree/2.15/src/main/resources):
 
 ```
 curl -s -X PUT "http://localhost:9200/ubi-events" -H "Content-Type: application/json" --data-binary @/path/to/events-mapping.json
@@ -326,7 +326,7 @@ logout|408
 
 ## Development
 
-If you find bugs or want to request a feature, please create [a new issue](https://github.com/o19s/opensearch-ubi/issues/new/choose). For questions or to discuss how UBI works, please find us in the [OpenSearch Slack](https://opensearch.org/slack.html) in the `#plugins` channel.
+If you find bugs or want to request a feature, please create [a new issue](https://github.com/opensearch-project/user-behavior-insights/issues/new/choose). For questions or to discuss how UBI works, please find us in the [OpenSearch Slack](https://opensearch.org/slack.html) in the `#plugins` channel.
 
 The plugin provides an implementation of an `ActionFilter` plugin that can capture and index queries, a `SearchExtBuilder` that provides the UBI parameters, and the object classes used to index the queries. Testing is done by YAML rest tests and unit tests.
 
@@ -342,13 +342,6 @@ To test and debug, build the OpenSearch docker image that contains the built plu
 
 ```
 docker compose build && docker compose up
-```
-
-Or to start a three-node OpenSearch cluster:
-
-```
-docker compose build
-docker compose -f docker-compose-cluster.yaml up
 ```
 
 ## Security
