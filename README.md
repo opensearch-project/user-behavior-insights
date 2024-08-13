@@ -10,7 +10,8 @@ UBI and this plugin project was originally proposed in the [OpenSearch UBI RFC](
 
 Please note that this repository is the implementation of the UBI plugin for OpenSearch.
 
-[!IMPORTANT] This release targets to the 1.0 version of the UBI Specification, which will be released when this plugin is released and the below links will be updated.
+> [!IMPORTANT] 
+> This release targets to the 1.0.0 version of the UBI Specification.
 
 For details on the JSON Schema used by UBI to send and receive queries and events please see the [UBI](https://github.com/o19s/ubi) repository and the links below.
 * [Query Request Schema](https://o19s.github.io/ubi/docs/html/query.request.schema.html)
