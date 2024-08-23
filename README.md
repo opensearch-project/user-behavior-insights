@@ -37,7 +37,7 @@ To get started, download the plugin zip file from the [releases](https://github.
 bin/opensearch-plugin install file:/opensearch-ubi-1.0.0-os2.14.0.zip
 ```
 
-You will be prompted while installing the plugin beacuse the plugin defines additional security permissions. These permissions allow the plugin to serialize query requests to JSON for storing and to allow the plugin to send query requests to Data Prepper. You can skip the prompt by adding the `--batch` argument to the above command.
+You will be prompted while installing the plugin because the plugin defines additional security permissions. These permissions allow the plugin to serialize query requests to JSON for storing and to allow the plugin to send query requests to Data Prepper. You can skip the prompt by adding the `--batch` argument to the above command.
 
 To create the UBI indexes called `ubi_queries` and `ubi_events`, send a query to an OpenSearch index with the `ubi` query block added:
 
