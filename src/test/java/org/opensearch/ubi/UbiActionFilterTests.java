@@ -61,7 +61,7 @@ public class UbiActionFilterTests extends OpenSearchTestCase {
         final ActionFuture<IndicesExistsResponse> actionFuture = mock(ActionFuture.class);
         when(indicesAdminClient.exists(any(IndicesExistsRequest.class))).thenReturn(actionFuture);
 
-        final UbiActionFilter ubiActionFilter = new UbiActionFilter(client, environment);
+        final UbiActionFilter ubiActionFilter = new UbiActionFilter(client, environment, null);
         final ActionListener<SearchResponse> listener = mock(ActionListener.class);
 
         final SearchRequest request = mock(SearchRequest.class);
@@ -118,7 +118,7 @@ public class UbiActionFilterTests extends OpenSearchTestCase {
         final ActionFuture<IndicesExistsResponse> actionFuture = mock(ActionFuture.class);
         when(indicesAdminClient.exists(any(IndicesExistsRequest.class))).thenReturn(actionFuture);
 
-        final UbiActionFilter ubiActionFilter = new UbiActionFilter(client, environment);
+        final UbiActionFilter ubiActionFilter = new UbiActionFilter(client, environment, null);
         final ActionListener<SearchResponse> listener = mock(ActionListener.class);
 
         final SearchRequest request = mock(SearchRequest.class);
