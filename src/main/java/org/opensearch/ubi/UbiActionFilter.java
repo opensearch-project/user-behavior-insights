@@ -141,9 +141,7 @@ public class UbiActionFilter implements ActionFilter {
                         final QueryResponse queryResponse = new QueryResponse(queryId, queryResponseId, queryResponseHitIds);
                         final QueryRequest queryRequest = new QueryRequest(queryId, userQuery, userId, query, queryAttributes, queryResponse);
 
-                        if(tracer != null) {
-                            sendOtelTrace(task, tracer, queryRequest);
-                        }
+                        sendOtelTrace(task, tracer, queryRequest);
 
                         final String dataPrepperUrl = environment.settings().get(UbiSettings.DATA_PREPPER_URL);
                         if(dataPrepperUrl != null) {
