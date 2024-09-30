@@ -130,7 +130,8 @@ public class UbiActionFilter implements ActionFilter {
                                 queryResponseHitIds.add(String.valueOf(hit.docId()));
                             } else {
                                 final Map<String, Object> source = hit.getSourceAsMap();
-                                queryResponseHitIds.add((String) source.get(objectIdField));
+                                final List<String> objectIds = (List<String>) source.get(objectIdField);
+                                queryResponseHitIds.addAll(objectIds);
                             }
 
                         }
