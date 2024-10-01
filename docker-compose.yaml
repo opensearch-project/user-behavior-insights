@@ -10,7 +10,7 @@ services:
       - 2021:2021
     volumes:
       - ./dataprepper/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
-      - ./dataprepper/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml 
+      - ./dataprepper/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
     networks:
       - ubi-dev-os-net
 
@@ -24,6 +24,16 @@ services:
       logger.level: info
       OPENSEARCH_INITIAL_ADMIN_PASSWORD: SuperSecretPassword_123
       #ubi.dataprepper.url: "http://dataprepper-dev-os:2021/log/ingest"
+      # otel
+      telemetry.feature.tracer.enabled: true
+      telemetry.tracer.enabled: true
+      telemetry.tracer.sampler.probability: 1.0
+      opensearch.experimental.feature.telemetry.enabled: true
+      telemetry.otel.tracer.span.exporter.class: io.opentelemetry.exporter.logging.LoggingSpanExporter
+      telemetry.otel.tracer.exporter.batch_size: 1
+      telemetry.otel.tracer.exporter.max_queue_size: 3
+    volumes:
+      - "./volumes/logs:/usr/share/opensearch/logs"
     ulimits:
       memlock:
         soft: -1

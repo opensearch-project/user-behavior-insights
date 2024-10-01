@@ -18,6 +18,14 @@ For details on the JSON Schema used by UBI to send and receive queries and event
 * [Query Response Schema](https://o19s.github.io/ubi/docs/html/query.response.schema.html)
 * [Event Schema](https://o19s.github.io/ubi/docs/html/event.schema.html)
 
+## UBI, Data Prepper, and Open Telemetry
+
+The UBI plugin can store UBI query data in one of three ways:
+
+- By directly indexing the UBI query data in the `ubi_queries` index in the same OpenSearch cluster as the plugin.
+- By sending the UBI query data as JSON to a Data Prepper [http](https://opensearch.org/docs/latest/data-prepper/pipelines/configuration/sources/http/) source. The Data Prepper endpoint is provided via the `ubi.dataprepper.url` setting.
+- By sending the UBI query data as Open Telemetry traces. This utilizes the native OpenSearch OTel capabilities which are exposed via the `TelemetryAwarePlugin` interface. As UBI queries are received, trace events will be generated. OpenSearch must be configured as described in [Distributed tracing](https://opensearch.org/docs/latest/observing-your-data/trace/distributed-tracing/) for the events to be sent.
+
 ## Getting Help
 
 * Start with the [Documentation](https://opensearch.org/docs/latest/search-plugins/ubi/index/) site to how to use this plugin.
