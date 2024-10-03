@@ -148,8 +148,7 @@ public class UbiActionFilter implements ActionFilter {
                 final String userId = ubiParameters.getClientId();
                 final String objectIdField = ubiParameters.getObjectIdField();
                 final Map<String, String> queryAttributes = ubiParameters.getQueryAttributes();
-
-                // TODO: Ignore the UBI in ext.
+                
                 final String query = searchRequest.source().toString();
 
                 final List<String> queryResponseHitIds = new LinkedList<>();
