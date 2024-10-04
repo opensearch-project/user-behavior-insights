@@ -8,10 +8,6 @@
 
 package org.opensearch.ubi;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -25,6 +21,8 @@ import org.opensearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.opensearch.action.index.IndexRequest;
 import org.opensearch.action.index.IndexResponse;
+import org.opensearch.action.search.MultiSearchRequest;
+import org.opensearch.action.search.MultiSearchResponse;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.action.support.ActionFilter;
@@ -39,6 +37,9 @@ import org.opensearch.core.action.ActionResponse;
 import org.opensearch.env.Environment;
 import org.opensearch.search.SearchHit;
 import org.opensearch.tasks.Task;
+import org.opensearch.telemetry.tracing.Span;
+import org.opensearch.telemetry.tracing.SpanBuilder;
+import org.opensearch.telemetry.tracing.Tracer;
 import org.opensearch.ubi.ext.UbiParameters;
 
 import java.io.ByteArrayOutputStream;
@@ -69,15 +70,18 @@ public class UbiActionFilter implements ActionFilter {
 
     private final Client client;
     private final Environment environment;
+    private final Tracer tracer;
 
     /**
      * Creates a new filter.
      * @param client An OpenSearch {@link Client}.
      * @param environment The OpenSearch {@link Environment}.
+     * @param tracer An Open Telemetry {@link Tracer tracer}.
      */
-    public UbiActionFilter(Client client, Environment environment) {
+    public UbiActionFilter(Client client, Environment environment, Tracer tracer) {
         this.client = client;
         this.environment = environment;
+        this.tracer = tracer;
     }
 
     @Override
@@ -94,7 +98,7 @@ public class UbiActionFilter implements ActionFilter {
         ActionFilterChain<Request, Response> chain
     ) {
 
-        if (!(request instanceof SearchRequest)) {
+        if (!(request instanceof SearchRequest || request instanceof MultiSearchRequest)) {
             chain.proceed(task, action, request, listener);
             return;
         }
@@ -104,64 +108,18 @@ public class UbiActionFilter implements ActionFilter {
             @Override
             public void onResponse(Response response) {
 
-                final SearchRequest searchRequest = (SearchRequest) request;
+                if (request instanceof MultiSearchRequest) {
 
-                if (response instanceof SearchResponse) {
+                    final MultiSearchRequest multiSearchRequest = (MultiSearchRequest) request;
 
-                    final UbiParameters ubiParameters = UbiParameters.getUbiParameters(searchRequest);
-
-                    if (ubiParameters != null) {
-
-                        final String queryId = ubiParameters.getQueryId();
-                        final String userQuery = ubiParameters.getUserQuery();
-                        final String userId = ubiParameters.getClientId();
-                        final String objectIdField = ubiParameters.getObjectIdField();
-                        final Map<String, String> queryAttributes = ubiParameters.getQueryAttributes();
-
-                        // TODO: Ignore the UBI in ext.
-                        final String query = searchRequest.source().toString();
-
-                        final List<String> queryResponseHitIds = new LinkedList<>();
-
-                        for (final SearchHit hit : ((SearchResponse) response).getHits()) {
-
-                            if (objectIdField == null || objectIdField.isEmpty()) {
-                                // Use the result's docId since no object_id was given for the search.
-                                queryResponseHitIds.add(String.valueOf(hit.docId()));
-                            } else {
-                                final Map<String, Object> source = hit.getSourceAsMap();
-                                queryResponseHitIds.add((String) source.get(objectIdField));
-                            }
-
-                        }
-
-                        final String queryResponseId = UUID.randomUUID().toString();
-                        final QueryResponse queryResponse = new QueryResponse(queryId, queryResponseId, queryResponseHitIds);
-                        final QueryRequest queryRequest = new QueryRequest(queryId, userQuery, userId, query, queryAttributes, queryResponse);
-
-                        final String dataPrepperUrl = environment.settings().get(UbiSettings.DATA_PREPPER_URL);
-                        if(dataPrepperUrl != null) {
-                            sendToDataPrepper(dataPrepperUrl, queryRequest);
-                        } else {
-                            indexQuery(queryRequest);
-                        }
-
-                        SearchResponse searchResponse = (SearchResponse) response;
-
-                        response = (Response) new UbiSearchResponse(
-                                searchResponse.getInternalResponse(),
-                                searchResponse.getScrollId(),
-                                searchResponse.getTotalShards(),
-                                searchResponse.getSuccessfulShards(),
-                                searchResponse.getSkippedShards(),
-                                searchResponse.getTook().millis(),
-                                searchResponse.getShardFailures(),
-                                searchResponse.getClusters(),
-                                queryId
-                        );
-
+                    for(final SearchRequest searchRequest : multiSearchRequest.requests()) {
+                        handleSearchRequest(searchRequest, response);
                     }
 
+                }
+
+                if(request instanceof SearchRequest) {
+                    response = (Response) handleSearchRequest((SearchRequest) request, response);
                 }
 
                 listener.onResponse(response);
@@ -177,9 +135,72 @@ public class UbiActionFilter implements ActionFilter {
 
     }
 
+    private ActionResponse handleSearchRequest(final SearchRequest searchRequest, ActionResponse response) {
+
+        if (response instanceof SearchResponse) {
+
+            final UbiParameters ubiParameters = UbiParameters.getUbiParameters(searchRequest);
+
+            if (ubiParameters != null) {
+
+                final String queryId = ubiParameters.getQueryId();
+                final String userQuery = ubiParameters.getUserQuery();
+                final String userId = ubiParameters.getClientId();
+                final String objectIdField = ubiParameters.getObjectIdField();
+                final Map<String, String> queryAttributes = ubiParameters.getQueryAttributes();
+                
+                final String query = searchRequest.source().toString();
+
+                final List<String> queryResponseHitIds = new LinkedList<>();
+
+                for (final SearchHit hit : ((SearchResponse) response).getHits()) {
+
+                    if (objectIdField == null || objectIdField.isEmpty()) {
+                        // Use the result's docId since no object_id was given for the search.
+                        queryResponseHitIds.add(String.valueOf(hit.docId()));
+                    } else {
+                        final Map<String, Object> source = hit.getSourceAsMap();
+                        queryResponseHitIds.add((String) source.get(objectIdField));
+                    }
+
+                }
+
+                final String queryResponseId = UUID.randomUUID().toString();
+                final QueryResponse queryResponse = new QueryResponse(queryId, queryResponseId, queryResponseHitIds);
+                final QueryRequest queryRequest = new QueryRequest(queryId, userQuery, userId, query, queryAttributes, queryResponse);
+
+                final String dataPrepperUrl = environment.settings().get(UbiSettings.DATA_PREPPER_URL);
+                if (dataPrepperUrl != null) {
+                    sendToDataPrepper(dataPrepperUrl, queryRequest);
+                } else {
+                    indexQuery(queryRequest);
+                }
+
+                final SearchResponse searchResponse = (SearchResponse) response;
+
+                response = new UbiSearchResponse(
+                        searchResponse.getInternalResponse(),
+                        searchResponse.getScrollId(),
+                        searchResponse.getTotalShards(),
+                        searchResponse.getSuccessfulShards(),
+                        searchResponse.getSkippedShards(),
+                        searchResponse.getTook().millis(),
+                        searchResponse.getShardFailures(),
+                        searchResponse.getClusters(),
+                        queryId
+                );
+
+            }
+
+        }
+
+        return response;
+
+    }
+
     private void sendToDataPrepper(final String dataPrepperUrl, final QueryRequest queryRequest) {
 
-        LOGGER.debug("Sending query to DataPrepper at " + dataPrepperUrl);
+        LOGGER.debug("Sending query to DataPrepper at {}", dataPrepperUrl);
 
         // TODO: Do this in a background thread?
         try {
@@ -301,6 +322,28 @@ public class UbiActionFilter implements ActionFilter {
         } catch (IOException e) {
             throw new IllegalStateException("Unable to get mapping from resource [" + fileName + "]", e);
         }
+    }
+
+    private void sendOtelTrace(final Task task, final Tracer tracer, final QueryRequest queryRequest) {
+
+        final Span span = tracer.startSpan(SpanBuilder.from(task, "ubi_search"));
+
+        span.addAttribute("ubi.user_id", queryRequest.getQueryId());
+        span.addAttribute("ubi.query", queryRequest.getQuery());
+        span.addAttribute("ubi.user_query", queryRequest.getUserQuery());
+        span.addAttribute("ubi.client_id", queryRequest.getClientId());
+        span.addAttribute("ubi.timestamp", queryRequest.getTimestamp());
+
+        for (final String key : queryRequest.getQueryAttributes().keySet()) {
+            span.addAttribute("ubi.attribute." + key, queryRequest.getQueryAttributes().get(key));
+        }
+
+        span.addAttribute("ubi.query_response.response_id", queryRequest.getQueryResponse().getQueryResponseId());
+        span.addAttribute("ubi.query_response.query_id", queryRequest.getQueryResponse().getQueryId());
+        span.addAttribute("ubi.query_response.response_id", String.join(",", queryRequest.getQueryResponse().getQueryResponseObjectIds()));
+
+        span.endSpan();
+
     }
 
 }

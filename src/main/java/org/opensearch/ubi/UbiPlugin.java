@@ -13,7 +13,6 @@ import org.opensearch.client.Client;
 import org.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.opensearch.cluster.service.ClusterService;
 import org.opensearch.common.settings.Setting;
-import org.opensearch.common.settings.Settings;
 import org.opensearch.core.common.io.stream.NamedWriteableRegistry;
 import org.opensearch.core.xcontent.NamedXContentRegistry;
 import org.opensearch.env.Environment;
@@ -21,8 +20,11 @@ import org.opensearch.env.NodeEnvironment;
 import org.opensearch.plugins.ActionPlugin;
 import org.opensearch.plugins.Plugin;
 import org.opensearch.plugins.SearchPlugin;
+import org.opensearch.plugins.TelemetryAwarePlugin;
 import org.opensearch.repositories.RepositoriesService;
 import org.opensearch.script.ScriptService;
+import org.opensearch.telemetry.metrics.MetricsRegistry;
+import org.opensearch.telemetry.tracing.Tracer;
 import org.opensearch.threadpool.ThreadPool;
 import org.opensearch.ubi.ext.UbiParametersExtBuilder;
 import org.opensearch.watcher.ResourceWatcherService;
@@ -38,7 +40,7 @@ import static java.util.Collections.singletonList;
 /**
  * OpenSearch User Behavior Insights
  */
-public class UbiPlugin extends Plugin implements ActionPlugin, SearchPlugin {
+public class UbiPlugin extends Plugin implements ActionPlugin, SearchPlugin, TelemetryAwarePlugin {
 
     private ActionFilter ubiActionFilter;
 
@@ -69,10 +71,12 @@ public class UbiPlugin extends Plugin implements ActionPlugin, SearchPlugin {
         NodeEnvironment nodeEnvironment,
         NamedWriteableRegistry namedWriteableRegistry,
         IndexNameExpressionResolver indexNameExpressionResolver,
-        Supplier<RepositoriesService> repositoriesServiceSupplier
+        Supplier<RepositoriesService> repositoriesServiceSupplier,
+        Tracer tracer,
+        MetricsRegistry metricsRegistry
     ) {
 
-        this.ubiActionFilter = new UbiActionFilter(client, environment);
+        this.ubiActionFilter = new UbiActionFilter(client, environment, tracer);
         return Collections.emptyList();
 
     }
