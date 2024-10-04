@@ -27,6 +27,7 @@ import org.opensearch.search.SearchHit;
 import org.opensearch.search.SearchHits;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.tasks.Task;
+import org.opensearch.telemetry.tracing.noop.NoopTracer;
 import org.opensearch.test.OpenSearchTestCase;
 import org.opensearch.ubi.ext.UbiParameters;
 import org.opensearch.ubi.ext.UbiParametersExtBuilder;
@@ -61,7 +62,7 @@ public class UbiActionFilterTests extends OpenSearchTestCase {
         final ActionFuture<IndicesExistsResponse> actionFuture = mock(ActionFuture.class);
         when(indicesAdminClient.exists(any(IndicesExistsRequest.class))).thenReturn(actionFuture);
 
-        final UbiActionFilter ubiActionFilter = new UbiActionFilter(client, environment);
+        final UbiActionFilter ubiActionFilter = new UbiActionFilter(client, environment, NoopTracer.INSTANCE);
         final ActionListener<SearchResponse> listener = mock(ActionListener.class);
 
         final SearchRequest request = mock(SearchRequest.class);
@@ -118,7 +119,7 @@ public class UbiActionFilterTests extends OpenSearchTestCase {
         final ActionFuture<IndicesExistsResponse> actionFuture = mock(ActionFuture.class);
         when(indicesAdminClient.exists(any(IndicesExistsRequest.class))).thenReturn(actionFuture);
 
-        final UbiActionFilter ubiActionFilter = new UbiActionFilter(client, environment);
+        final UbiActionFilter ubiActionFilter = new UbiActionFilter(client, environment, NoopTracer.INSTANCE);
         final ActionListener<SearchResponse> listener = mock(ActionListener.class);
 
         final SearchRequest request = mock(SearchRequest.class);

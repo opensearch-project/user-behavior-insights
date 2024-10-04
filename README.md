@@ -18,8 +18,17 @@ For details on the JSON Schema used by UBI to send and receive queries and event
 * [Query Response Schema](https://o19s.github.io/ubi/docs/html/query.response.schema.html)
 * [Event Schema](https://o19s.github.io/ubi/docs/html/event.schema.html)
 
+## UBI, Data Prepper, and Open Telemetry
+
+The UBI plugin can store UBI query data in one of three ways:
+
+- By directly indexing the UBI query data in the `ubi_queries` index in the same OpenSearch cluster as the plugin.
+- By sending the UBI query data as JSON to a Data Prepper [http](https://opensearch.org/docs/latest/data-prepper/pipelines/configuration/sources/http/) source. The Data Prepper endpoint is provided via the `ubi.dataprepper.url` setting.
+- By sending the UBI query data as Open Telemetry traces. This utilizes the native OpenSearch OTel capabilities which are exposed via the `TelemetryAwarePlugin` interface. As UBI queries are received, trace events will be generated. OpenSearch must be configured as described in [Distributed tracing](https://opensearch.org/docs/latest/observing-your-data/trace/distributed-tracing/) for the events to be sent.
+
 ## Getting Help
 
+* Start with the [Documentation](https://opensearch.org/docs/latest/search-plugins/ubi/index/) site to how to use this plugin.
 * For questions or help getting started, please find us in the [OpenSearch Slack](https://opensearch.org/slack.html) in the `#plugins` channel.
 * For bugs or feature requests, please create [a new issue](https://github.com/o19s/opensearch-ubi/issues/new/choose).
 
@@ -37,7 +46,7 @@ To get started, download the plugin zip file from the [releases](https://github.
 bin/opensearch-plugin install file:/opensearch-ubi-1.0.0-os2.14.0.zip
 ```
 
-You will be prompted while installing the plugin beacuse the plugin defines additional security permissions. These permissions allow the plugin to serialize query requests to JSON for storing and to allow the plugin to send query requests to Data Prepper. You can skip the prompt by adding the `--batch` argument to the above command.
+You will be prompted while installing the plugin because the plugin defines additional security permissions. These permissions allow the plugin to serialize query requests to JSON for storing and to allow the plugin to send query requests to Data Prepper. You can skip the prompt by adding the `--batch` argument to the above command.
 
 To create the UBI indexes called `ubi_queries` and `ubi_events`, send a query to an OpenSearch index with the `ubi` query block added:
 

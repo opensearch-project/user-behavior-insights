@@ -1,0 +1,74 @@
+---
+"Query":
+
+  - do:
+      indices.delete:
+        index: ubi_queries
+        ignore_unavailable: true
+
+  - do:
+      indices.create:
+        index: ecommerce1
+        body:
+          mappings:
+            { "properties": { "category": { "type": "text" } } }
+
+  - match: { acknowledged: true }
+  - match: { index: "ecommerce1"}
+
+  - do:
+      indices.create:
+        index: ecommerce2
+        body:
+          mappings:
+            { "properties": { "category": { "type": "text" } } }
+
+  - match: { acknowledged: true }
+  - match: { index: "ecommerce2"}
+
+  - do:
+      index:
+        index: ecommerce1
+        id: 1
+        body: { category: notebook }
+
+  - match: { result: created }
+
+  - do:
+      index:
+        index: ecommerce2
+        id: 1
+        body: { category: notebook }
+
+  - match: { result: created }
+
+  - do:
+      indices.refresh:
+        index: [ "ecommerce1" ]
+
+  - do:
+      indices.refresh:
+        index: [ "ecommerce2" ]
+
+  - do:
+      msearch:
+        rest_total_hits_as_int: true
+        body:
+          - index: ecommerce1
+          - {query: {match_all: {}}, "ext": {"ubi": {"query_id": "12345"}}}
+          - index: ecommerce2
+          - {query: {match_all: {}}, "ext": {"ubi": {"query_id": "12345"}}}
+
+  - match:  { responses.0.hits.total: 1}
+  - match:  { responses.1.hits.total: 1}
+
+  - do:
+      cluster.health:
+        index: [ubi_queries]
+        wait_for_no_initializing_shards: true
+
+  - do:
+      indices.exists:
+        index: ubi_queries
+
+  - is_true: ''
