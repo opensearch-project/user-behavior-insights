@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,6 +28,7 @@ public class QueryRequest {
     private final String query;
     private final Map<String, String> queryAttributes;
     private final QueryResponse queryResponse;
+    private final List<String> indexes;
 
     /**
      * Creates a query request.
@@ -38,7 +40,8 @@ public class QueryRequest {
      * @param queryResponse The {@link QueryResponse} for this query request.
      */
     public QueryRequest(final String queryId, final String userQuery, final String clientId, final String query,
-                        final Map<String, String> queryAttributes, final QueryResponse queryResponse) {
+                        final Map<String, String> queryAttributes, final QueryResponse queryResponse,
+                        final List<String> indexes) {
 
         this.timestamp = System.currentTimeMillis();
         this.queryId = queryId;
@@ -47,6 +50,7 @@ public class QueryRequest {
         this.query = query;
         this.queryAttributes = queryAttributes;
         this.queryResponse = queryResponse;
+        this.indexes = indexes;
 
     }
 
@@ -130,6 +134,13 @@ public class QueryRequest {
      */
     public QueryResponse getQueryResponse() {
         return queryResponse;
+    }
+
+    /**
+     * Gets the indexes for the query.
+     */
+    public List<String> getIndexes() {
+        return indexes;
     }
 
 }

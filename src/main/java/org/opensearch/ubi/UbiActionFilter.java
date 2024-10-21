@@ -48,11 +48,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * An implementation of {@link ActionFilter} that listens for OpenSearch
@@ -165,9 +161,16 @@ public class UbiActionFilter implements ActionFilter {
 
                 }
 
+                final List<String> indexes;
+                if(searchRequest.indices() != null && searchRequest.indices().length > 0) {
+                    indexes = List.of(searchRequest.indices());
+                } else {
+                    indexes = new ArrayList<>();
+                }
+
                 final String queryResponseId = UUID.randomUUID().toString();
                 final QueryResponse queryResponse = new QueryResponse(queryId, queryResponseId, queryResponseHitIds);
-                final QueryRequest queryRequest = new QueryRequest(queryId, userQuery, userId, query, queryAttributes, queryResponse);
+                final QueryRequest queryRequest = new QueryRequest(queryId, userQuery, userId, query, queryAttributes, queryResponse, indexes);
 
                 final String dataPrepperUrl = environment.settings().get(UbiSettings.DATA_PREPPER_URL);
                 if (dataPrepperUrl != null) {
@@ -281,6 +284,7 @@ public class UbiActionFilter implements ActionFilter {
                 source.put("query_response_object_ids", queryRequest.getQueryResponse().getQueryResponseObjectIds());
                 source.put("client_id", queryRequest.getClientId());
                 source.put("user_query", queryRequest.getUserQuery());
+                source.put("indexes", queryRequest.getIndexes());
                 source.put("query_attributes", queryRequest.getQueryAttributes());
 
                 // The query can be null for some types of queries.
