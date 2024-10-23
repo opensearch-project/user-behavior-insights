@@ -28,6 +28,7 @@ public class QueryRequest {
     private final String clientId;
     private final String userQuery;
     private final String query;
+    private final String application;
     private final Map<String, String> queryAttributes;
     private final QueryResponse queryResponse;
 
@@ -43,13 +44,15 @@ public class QueryRequest {
      * @param queryResponse The {@link QueryResponse} for this query request.
      */
     public QueryRequest(final String queryId, final String userQuery, final String clientId, final String query,
-                        final Map<String, String> queryAttributes, final QueryResponse queryResponse) {
+                        final String application, final Map<String, String> queryAttributes,
+                        final QueryResponse queryResponse) {
 
         this.timestamp = sdf.format(new Date());
         this.queryId = queryId;
         this.clientId = clientId;
         this.userQuery = userQuery;
         this.query = query;
+        this.application = application;
         this.queryAttributes = queryAttributes;
         this.queryResponse = queryResponse;
 
@@ -86,6 +89,14 @@ public class QueryRequest {
      */
     public String getTimestamp() {
         return timestamp;
+    }
+
+    /**
+     * Gets the application.
+     * @return The application.
+     */
+    public String getApplication() {
+        return application;
     }
 
     /**
