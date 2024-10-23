@@ -13,6 +13,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -20,7 +23,7 @@ import java.util.Map;
  */
 public class QueryRequest {
 
-    private final long timestamp;
+    private final String timestamp;
     private final String queryId;
     private final String clientId;
     private final String userQuery;
@@ -40,7 +43,8 @@ public class QueryRequest {
     public QueryRequest(final String queryId, final String userQuery, final String clientId, final String query,
                         final Map<String, String> queryAttributes, final QueryResponse queryResponse) {
 
-        this.timestamp = System.currentTimeMillis();
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
+        this.timestamp = sdf.format(new Date());
         this.queryId = queryId;
         this.clientId = clientId;
         this.userQuery = userQuery;
@@ -79,7 +83,7 @@ public class QueryRequest {
      * Gets the timestamp.
      * @return The timestamp.
      */
-    public long getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
