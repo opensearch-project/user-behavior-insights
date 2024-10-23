@@ -31,6 +31,8 @@ public class QueryRequest {
     private final Map<String, String> queryAttributes;
     private final QueryResponse queryResponse;
 
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
+
     /**
      * Creates a query request.
      * @param queryId The ID of the query.
@@ -43,7 +45,6 @@ public class QueryRequest {
     public QueryRequest(final String queryId, final String userQuery, final String clientId, final String query,
                         final Map<String, String> queryAttributes, final QueryResponse queryResponse) {
 
-        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
         this.timestamp = sdf.format(new Date());
         this.queryId = queryId;
         this.clientId = clientId;
