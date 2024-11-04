@@ -1,0 +1,6 @@
+opensearch-py==2.7.1
+numpy
+pandas
+pyarrow
+rich
+tqdm
