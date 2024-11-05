@@ -6,7 +6,7 @@
         index: ecommerce
         body:
           mappings:
-            { "properties": { "category": { "type": "text" }, "timestamp": { "type": "date", "format": "strict_date_time" } } }
+            { "properties": { "category": { "type": "text" } } }
 
   - match: { acknowledged: true }
   - match: { index: "ecommerce"}
@@ -43,7 +43,7 @@
       search:
         rest_total_hits_as_int: true
         index: ecommerce
-        body: "{\"query\": {\"match\": {\"category\": \"notebook\"}}, \"ext\": {\"ubi\": {\"query_id\": \"abcdef\", \"client_id\": \"abcabc\", \"user_query\": \"notebook\"}}}"
+        body: "{\"query\": {\"match\": {\"category\": \"notebook\"}}, \"ext\": {\"ubi\": {\"query_id\": \"abcdef\", \"client_id\": \"abcabc\", \"user_query\": \"notebook\", \"application\": \"app1\"}}}"
 
   - gte: { hits.total: 1 }
 
@@ -84,3 +84,11 @@
         body: {}
 
   - match: {count : 4}
+
+  - do:
+      search:
+        rest_total_hits_as_int: true
+        index: ubi_queries
+        body: "{\"query\": {\"match\": {\"application\": \"app1\"}}}"
+
+  - gte: { hits.total: 1 }

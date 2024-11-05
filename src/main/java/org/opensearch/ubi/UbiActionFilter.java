@@ -147,6 +147,7 @@ public class UbiActionFilter implements ActionFilter {
                 final String userQuery = ubiParameters.getUserQuery();
                 final String userId = ubiParameters.getClientId();
                 final String objectIdField = ubiParameters.getObjectIdField();
+                final String application = ubiParameters.getApplication();
                 final Map<String, String> queryAttributes = ubiParameters.getQueryAttributes();
                 
                 final String query = searchRequest.source().toString();
@@ -167,7 +168,7 @@ public class UbiActionFilter implements ActionFilter {
 
                 final String queryResponseId = UUID.randomUUID().toString();
                 final QueryResponse queryResponse = new QueryResponse(queryId, queryResponseId, queryResponseHitIds);
-                final QueryRequest queryRequest = new QueryRequest(queryId, userQuery, userId, query, queryAttributes, queryResponse);
+                final QueryRequest queryRequest = new QueryRequest(queryId, userQuery, userId, query, application, queryAttributes, queryResponse);
 
                 final String dataPrepperUrl = environment.settings().get(UbiSettings.DATA_PREPPER_URL);
                 if (dataPrepperUrl != null) {
@@ -280,6 +281,7 @@ public class UbiActionFilter implements ActionFilter {
                 source.put("query_response_id", queryRequest.getQueryResponse().getQueryResponseId());
                 source.put("query_response_object_ids", queryRequest.getQueryResponse().getQueryResponseObjectIds());
                 source.put("client_id", queryRequest.getClientId());
+                source.put("application", queryRequest.getApplication());
                 source.put("user_query", queryRequest.getUserQuery());
                 source.put("query_attributes", queryRequest.getQueryAttributes());
 
