@@ -34,7 +34,7 @@ public class UbiParametersExtBuilderTests extends OpenSearchTestCase {
         final Map<String, String> queryAttributes = new HashMap<>();
 
         final UbiParametersExtBuilder builder = new UbiParametersExtBuilder();
-        final UbiParameters parameters = new UbiParameters("query_id", "user_query", "client_id", "object_id_field", queryAttributes);
+        final UbiParameters parameters = new UbiParameters("query_id", "user_query", "client_id", "app", "object_id_field", queryAttributes);
         builder.setParams(parameters);
         assertEquals(parameters, builder.getParams());
 
@@ -49,7 +49,7 @@ public class UbiParametersExtBuilderTests extends OpenSearchTestCase {
     }
 
     public void testXContentRoundTrip() throws IOException {
-        UbiParameters param1 = new UbiParameters("query_id", "user_query", "client_id", "object_id_field", Collections.emptyMap());
+        UbiParameters param1 = new UbiParameters("query_id", "user_query", "client_id", "app", "object_id_field", Collections.emptyMap());
         UbiParametersExtBuilder extBuilder = new UbiParametersExtBuilder();
         extBuilder.setParams(param1);
         XContentType xContentType = randomFrom(XContentType.values());
@@ -61,11 +61,12 @@ public class UbiParametersExtBuilderTests extends OpenSearchTestCase {
         assertEquals("query_id", parameters.getQueryId());
         assertEquals("user_query", parameters.getUserQuery());
         assertEquals("client_id", parameters.getClientId());
+        assertEquals("app", parameters.getApplication());
         assertEquals("object_id_field", parameters.getObjectIdField());
     }
 
     public void testXContentRoundTripAllValues() throws IOException {
-        UbiParameters param1 = new UbiParameters("query_id", "user_query", "client_id", "object_id_field", Collections.emptyMap());
+        UbiParameters param1 = new UbiParameters("query_id", "user_query", "client_id", "app","object_id_field", Collections.emptyMap());
         UbiParametersExtBuilder extBuilder = new UbiParametersExtBuilder();
         extBuilder.setParams(param1);
         XContentType xContentType = randomFrom(XContentType.values());
@@ -76,7 +77,7 @@ public class UbiParametersExtBuilderTests extends OpenSearchTestCase {
     }
 
     public void testStreamRoundTrip() throws IOException {
-        UbiParameters param1 = new UbiParameters("query_id", "user_query", "client_id", "object_id_field", Collections.emptyMap());
+        UbiParameters param1 = new UbiParameters("query_id", "user_query", "client_id", "app","object_id_field", Collections.emptyMap());
         UbiParametersExtBuilder extBuilder = new UbiParametersExtBuilder();
         extBuilder.setParams(param1);
         BytesStreamOutput bso = new BytesStreamOutput();
@@ -87,11 +88,12 @@ public class UbiParametersExtBuilderTests extends OpenSearchTestCase {
         assertEquals("query_id", parameters.getQueryId());
         assertEquals("user_query", parameters.getUserQuery());
         assertEquals("client_id", parameters.getClientId());
+        assertEquals("app", parameters.getApplication());
         assertEquals("object_id_field", parameters.getObjectIdField());
     }
 
     public void testStreamRoundTripAllValues() throws IOException {
-        UbiParameters param1 = new UbiParameters("query_id", "user_query", "client_id", "object_id_field", Collections.emptyMap());
+        UbiParameters param1 = new UbiParameters("query_id", "user_query", "client_id", "app","object_id_field", Collections.emptyMap());
         UbiParametersExtBuilder extBuilder = new UbiParametersExtBuilder();
         extBuilder.setParams(param1);
         BytesStreamOutput bso = new BytesStreamOutput();

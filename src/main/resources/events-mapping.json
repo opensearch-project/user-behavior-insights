@@ -7,7 +7,7 @@
     "message_type": { "type": "keyword", "ignore_above": 100 },
     "timestamp": {
       "type": "date",
-      "format":"rfc3339_lenient||epoch_millis",
+      "format":"strict_date_time",
       "ignore_malformed": true, 
       "doc_values": true
     },

@@ -13,6 +13,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -20,13 +23,16 @@ import java.util.Map;
  */
 public class QueryRequest {
 
-    private final long timestamp;
+    private final String timestamp;
     private final String queryId;
     private final String clientId;
     private final String userQuery;
     private final String query;
+    private final String application;
     private final Map<String, String> queryAttributes;
     private final QueryResponse queryResponse;
+
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
 
     /**
      * Creates a query request.
@@ -38,13 +44,15 @@ public class QueryRequest {
      * @param queryResponse The {@link QueryResponse} for this query request.
      */
     public QueryRequest(final String queryId, final String userQuery, final String clientId, final String query,
-                        final Map<String, String> queryAttributes, final QueryResponse queryResponse) {
+                        final String application, final Map<String, String> queryAttributes,
+                        final QueryResponse queryResponse) {
 
-        this.timestamp = System.currentTimeMillis();
+        this.timestamp = sdf.format(new Date());
         this.queryId = queryId;
         this.clientId = clientId;
         this.userQuery = userQuery;
         this.query = query;
+        this.application = application;
         this.queryAttributes = queryAttributes;
         this.queryResponse = queryResponse;
 
@@ -79,8 +87,16 @@ public class QueryRequest {
      * Gets the timestamp.
      * @return The timestamp.
      */
-    public long getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
+    }
+
+    /**
+     * Gets the application.
+     * @return The application.
+     */
+    public String getApplication() {
+        return application;
     }
 
     /**
