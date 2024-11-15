@@ -30,7 +30,7 @@ The UBI plugin can store UBI query data in one of three ways:
 
 * Start with the [Documentation](https://opensearch.org/docs/latest/search-plugins/ubi/index/) site to how to use this plugin.
 * For questions or help getting started, please find us in the [OpenSearch Slack](https://opensearch.org/slack.html) in the `#plugins` channel.
-* For bugs or feature requests, please create [a new issue](https://github.com/o19s/opensearch-ubi/issues/new/choose).
+* For bugs or feature requests, please create [a new issue](https://github.com/opensearch-project/user-behavior-insights/issues).
 
 ## Useful Commands
 
@@ -40,7 +40,7 @@ The `scripts/` directory contains example UBI requests for common use cases.
 
 ### Installing the Plugin
 
-To get started, download the plugin zip file from the [releases](https://github.com/o19s/opensearch-ubi/releases). Next, install the plugin into OpenSearch with the following command:
+To get started, download the plugin zip file from the [releases](https://github.com/opensearch-project/user-behavior-insights/releases). Next, install the plugin into OpenSearch with the following command:
 
 ```
 bin/opensearch-plugin install file:/opensearch-ubi-1.0.0-os2.14.0.zip
@@ -65,7 +65,7 @@ curl -s http://localhost:9200/ecommerce/_search -H "Content-Type: application/js
  }'
 ```
 
-These indexes can also be created manually by using the [mapping files](https://github.com/o19s/opensearch-ubi/tree/2.14.0/src/main/resources):
+These indexes can also be created manually by using the [mapping files](https://github.com/opensearch-project/user-behavior-insights/tree/main/src/main/resources):
 
 ```
 curl -s -X PUT "http://localhost:9200/ubi-events" -H "Content-Type: application/json" --data-binary @/path/to/events-mapping.json
@@ -336,7 +336,7 @@ logout|408
 
 ## Development
 
-If you find bugs or want to request a feature, please create [a new issue](https://github.com/o19s/opensearch-ubi/issues/new/choose). For questions or to discuss how UBI works, please find us in the [OpenSearch Slack](https://opensearch.org/slack.html) in the `#plugins` channel.
+If you find bugs or want to request a feature, please create [a new issue](https://github.com/opensearch-project/user-behavior-insights/issues). For questions or to discuss how UBI works, please find us in the [OpenSearch Slack](https://opensearch.org/slack.html) in the `#plugins` channel.
 
 The plugin provides an implementation of an `ActionFilter` plugin that can capture and index queries, a `SearchExtBuilder` that provides the UBI parameters, and the object classes used to index the queries. Testing is done by YAML rest tests and unit tests.
 
