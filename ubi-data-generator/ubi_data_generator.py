@@ -204,6 +204,9 @@ def simulate_events(gen_config, top_queries, result_sample_per_query):
         new_delta = np.random.exponential(gen_config.get_avg_time_between_queries().seconds)
         current_time = current_time + timedelta(seconds=new_delta)
 
+        # Format the timestamp
+        formatted_current_time = current_time.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+
         # Generation of Query and Impressions
         q = np.random.choice(top_queries["query"], p=top_queries["p"])
         judg_df = result_sample_per_query[q].copy()
@@ -221,8 +224,7 @@ def simulate_events(gen_config, top_queries, result_sample_per_query):
             "query_id": [query_id],
             "client_id": [client_id],
             "user_query": [q],
-            "object_id_field": "product_id",
-            "timestamp": current_time,
+            "timestamp": [formatted_current_time],
         }))
 
         judg_df["application"] = gen_config.application
@@ -230,8 +232,7 @@ def simulate_events(gen_config, top_queries, result_sample_per_query):
         judg_df["query_id"] = query_id
         judg_df["session_id"] = session_id
         judg_df["client_id"] = client_id
-        judg_df["timestamp"] = current_time
-        judg_df["timestamp"] = judg_df["timestamp"].values.astype("datetime64[ns]")
+        judg_df["timestamp"] = formatted_current_time
 
         events.append(judg_df)
 
@@ -242,7 +243,10 @@ def simulate_events(gen_config, top_queries, result_sample_per_query):
         time_deltas = np.random.exponential(gen_config.avg_time_between_clicks.seconds, clicks.shape[0])
         time_deltas = np.cumsum(time_deltas)
         time_deltas = pd.to_timedelta(time_deltas, unit='s')
-        clicks["timestamp"] = clicks.timestamp + time_deltas
+        
+        # Add time deltas to the current time
+        click_timestamps = pd.Series(current_time + time_deltas).dt.strftime("%Y-%m-%dT%H:%M:%S.%f").str[:-3] + "Z"
+        clicks["timestamp"] = click_timestamps.values
 
         events.append(clicks)
 
@@ -307,7 +311,7 @@ def make_query_event(gen_config, row):
         "client_id": row["client_id"],
         "user_query": row["user_query"],
         "query_attributes": {},
-        "timestamp": row["timestamp"].isoformat(),
+        "timestamp": row["timestamp"],
     }
     return query_event
 
@@ -319,7 +323,7 @@ def make_ubi_event(gen_config, row):
         "query_id": row["query_id"],
         "session_id": row["session_id"],
         "client_id": row["client_id"],
-        "timestamp": row["timestamp"].isoformat(),
+        "timestamp": row["timestamp"],
         "message_type": None,
         "message": None,
         "event_attributes": {
