@@ -65,11 +65,18 @@ curl -s http://localhost:9200/ecommerce/_search -H "Content-Type: application/js
  }'
 ```
 
-These indexes can also be created manually by using the [mapping files](https://github.com/opensearch-project/user-behavior-insights/tree/main/src/main/resources):
+These indexes can also be created manually by executing a query that implicitly creates the ubi indexes in the background:
 
 ```
-curl -s -X PUT "http://localhost:9200/ubi-events" -H "Content-Type: application/json" --data-binary @/path/to/events-mapping.json
-curl -s -X PUT "http://localhost:9200/ubi-queries" -H "Content-Type: application/json" --data-binary @/path/to/events-queries.json
+curl -s -X GET "http://localhost:9200/your_index_name/_search" -H "Content-Type: application/json" -d'
+{
+  "query": {
+    "match_all": {}
+  },
+  "ext": {
+    "ubi": {}
+  }
+}'
 ```
 
 ### Capturing Queries
