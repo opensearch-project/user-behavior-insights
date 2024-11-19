@@ -4,7 +4,7 @@
     "url": {
       "paths": [
         {
-          "path": "/_plugins/ubi",
+          "path": "/_plugins/ubi/initialize",
           "methods": [
             "POST"
           ]

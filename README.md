@@ -51,7 +51,7 @@ You will be prompted while installing the plugin because the plugin defines addi
 To create the UBI indexes `ubi_queries` and `ubi_events`, send a request to initialize the plugin:
 
 ```
-curl -s -X POST http://localhost:9200/_plugins/ubi
+curl -s -X POST http://localhost:9200/_plugins/ubi/initialize
 ```
 
 This will create the `ubi_queries` and `ubi_events` indexes with the appropriate mappings.

@@ -41,7 +41,7 @@ public class UbiRestHandler extends BaseRestHandler {
     /**
      * URL for initializing the plugin and the index mappings.
      */
-    public static final String INITIALIZE_URL = "/_plugins/ubi";
+    public static final String INITIALIZE_URL = "/_plugins/ubi/initialize";
 
     @Override
     public String getName() {
