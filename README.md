@@ -43,7 +43,7 @@ The `scripts/` directory contains example UBI requests for common use cases.
 To get started, download the plugin zip file from the [releases](https://github.com/opensearch-project/user-behavior-insights/releases). Next, install the plugin into OpenSearch with the following command:
 
 ```
-bin/opensearch-plugin install file:/opensearch-ubi-2.18.0.0.zip
+bin/opensearch-plugin install file:/opensearch-ubi-2.18.0.1.zip
 ```
 
 You will be prompted while installing the plugin because the plugin defines additional security permissions. These permissions allow the plugin to serialize query requests to JSON for storing and to allow the plugin to send query requests to Data Prepper. You can skip the prompt by adding the `--batch` argument to the above command.
