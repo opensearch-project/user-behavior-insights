@@ -1,0 +1,16 @@
+{
+  "ubi.initialize": {
+    "stability": "stable",
+    "url": {
+      "paths": [
+        {
+          "path": "/_plugins/ubi/initialize",
+          "methods": [
+            "POST"
+          ]
+        }
+      ]
+    },
+    "body": null
+  }
+}

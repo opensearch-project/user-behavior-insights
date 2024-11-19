@@ -11,8 +11,13 @@ package org.opensearch.ubi;
 import org.opensearch.action.support.ActionFilter;
 import org.opensearch.client.Client;
 import org.opensearch.cluster.metadata.IndexNameExpressionResolver;
+import org.opensearch.cluster.node.DiscoveryNodes;
 import org.opensearch.cluster.service.ClusterService;
+import org.opensearch.common.settings.ClusterSettings;
+import org.opensearch.common.settings.IndexScopedSettings;
 import org.opensearch.common.settings.Setting;
+import org.opensearch.common.settings.Settings;
+import org.opensearch.common.settings.SettingsFilter;
 import org.opensearch.core.common.io.stream.NamedWriteableRegistry;
 import org.opensearch.core.xcontent.NamedXContentRegistry;
 import org.opensearch.env.Environment;
@@ -22,6 +27,8 @@ import org.opensearch.plugins.Plugin;
 import org.opensearch.plugins.SearchPlugin;
 import org.opensearch.plugins.TelemetryAwarePlugin;
 import org.opensearch.repositories.RepositoriesService;
+import org.opensearch.rest.RestController;
+import org.opensearch.rest.RestHandler;
 import org.opensearch.script.ScriptService;
 import org.opensearch.telemetry.metrics.MetricsRegistry;
 import org.opensearch.telemetry.tracing.Tracer;
@@ -41,6 +48,12 @@ import static java.util.Collections.singletonList;
  * OpenSearch User Behavior Insights
  */
 public class UbiPlugin extends Plugin implements ActionPlugin, SearchPlugin, TelemetryAwarePlugin {
+
+    public static final String UBI_QUERIES_INDEX = "ubi_queries";
+    public static final String UBI_EVENTS_INDEX = "ubi_events";
+
+    public static final String EVENTS_MAPPING_FILE = "/events-mapping.json";
+    public static final String QUERIES_MAPPING_FILE = "/queries-mapping.json";
 
     private ActionFilter ubiActionFilter;
 
@@ -92,6 +105,19 @@ public class UbiPlugin extends Plugin implements ActionPlugin, SearchPlugin, Tel
 
         return searchExts;
 
+    }
+
+    @Override
+    public List<RestHandler> getRestHandlers(
+            final Settings settings,
+            final RestController restController,
+            final ClusterSettings clusterSettings,
+            final IndexScopedSettings indexScopedSettings,
+            final SettingsFilter settingsFilter,
+            final IndexNameExpressionResolver indexNameExpressionResolver,
+            final Supplier<DiscoveryNodes> nodesInCluster
+    ) {
+        return Collections.singletonList(new UbiRestHandler());
     }
 
 }
