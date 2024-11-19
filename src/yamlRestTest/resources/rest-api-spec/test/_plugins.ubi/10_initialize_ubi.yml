@@ -1,0 +1,22 @@
+---
+"Initialize the UBI indexes":
+
+  - do:
+      ubi.initialize: {}
+
+  - do:
+      cluster.health:
+        index: [ubi_queries]
+        wait_for_no_initializing_shards: true
+
+  - do:
+      indices.exists:
+        index: ubi_queries
+
+  - is_true: ''
+
+  - do:
+      indices.exists:
+        index: ubi_events
+
+  - is_true: ''

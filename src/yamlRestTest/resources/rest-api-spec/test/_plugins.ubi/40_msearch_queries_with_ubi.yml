@@ -2,9 +2,18 @@
 "Query":
 
   - do:
-      indices.delete:
+      ubi.initialize: {}
+
+  - do:
+      cluster.health:
+        index: [ubi_queries]
+        wait_for_no_initializing_shards: true
+
+  - do:
+      indices.exists:
         index: ubi_queries
-        ignore_unavailable: true
+
+  - is_true: ''
 
   - do:
       indices.create:
