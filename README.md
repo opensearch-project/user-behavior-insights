@@ -30,7 +30,7 @@ The UBI plugin can store UBI query data in one of three ways:
 
 * Start with the [Documentation](https://opensearch.org/docs/latest/search-plugins/ubi/index/) site to how to use this plugin.
 * For questions or help getting started, please find us in the [OpenSearch Slack](https://opensearch.org/slack.html) in the `#plugins` channel.
-* For bugs or feature requests, please create [a new issue](https://github.com/o19s/opensearch-ubi/issues/new/choose).
+* For bugs or feature requests, please create [a new issue](https://github.com/opensearch-project/user-behavior-insights/issues/new/choose).
 
 ## Useful Commands
 
@@ -40,37 +40,21 @@ The `scripts/` directory contains example UBI requests for common use cases.
 
 ### Installing the Plugin
 
-To get started, download the plugin zip file from the [releases](https://github.com/o19s/opensearch-ubi/releases). Next, install the plugin into OpenSearch with the following command:
+To get started, download the plugin zip file from the [releases](https://github.com/opensearch-project/user-behavior-insights/releases). Next, install the plugin into OpenSearch with the following command:
 
 ```
-bin/opensearch-plugin install file:/opensearch-ubi-1.0.0-os2.14.0.zip
+bin/opensearch-plugin install file:/opensearch-ubi-2.18.0.1.zip
 ```
 
 You will be prompted while installing the plugin because the plugin defines additional security permissions. These permissions allow the plugin to serialize query requests to JSON for storing and to allow the plugin to send query requests to Data Prepper. You can skip the prompt by adding the `--batch` argument to the above command.
 
-To create the UBI indexes called `ubi_queries` and `ubi_events`, send a query to an OpenSearch index with the `ubi` query block added:
+To create the UBI indexes `ubi_queries` and `ubi_events`, send a request to initialize the plugin:
 
 ```
-curl -s http://localhost:9200/ecommerce/_search -H "Content-Type: application/json" -d'
- {
-  "ext": {
-   "ubi": {
-    }
-   },
-   "query": {
-     "match": {
-       "name": "toner"
-     }
-   }
- }'
+curl -s -X POST http://localhost:9200/_plugins/ubi/initialize
 ```
 
-These indexes can also be created manually by using the [mapping files](https://github.com/o19s/opensearch-ubi/tree/2.14.0/src/main/resources):
-
-```
-curl -s -X PUT "http://localhost:9200/ubi-events" -H "Content-Type: application/json" --data-binary @/path/to/events-mapping.json
-curl -s -X PUT "http://localhost:9200/ubi-queries" -H "Content-Type: application/json" --data-binary @/path/to/events-queries.json
-```
+This will create the `ubi_queries` and `ubi_events` indexes with the appropriate mappings.
 
 ### Capturing Queries
 
@@ -336,7 +320,7 @@ logout|408
 
 ## Development
 
-If you find bugs or want to request a feature, please create [a new issue](https://github.com/o19s/opensearch-ubi/issues/new/choose). For questions or to discuss how UBI works, please find us in the [OpenSearch Slack](https://opensearch.org/slack.html) in the `#plugins` channel.
+If you find bugs or want to request a feature, please create [a new issue](https://github.com/opensearch-project/user-behavior-insights/issues/new/choose). For questions or to discuss how UBI works, please find us in the [OpenSearch Slack](https://opensearch.org/slack.html) in the `#plugins` channel.
 
 The plugin provides an implementation of an `ActionFilter` plugin that can capture and index queries, a `SearchExtBuilder` that provides the UBI parameters, and the object classes used to index the queries. Testing is done by YAML rest tests and unit tests.
 
@@ -365,7 +349,7 @@ docker compose -f docker-compose-cluster.yaml up
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
 
 ## License
-This code is licensed under the Apache 2.0 License. See [LICENSE.txt](LICENSE.txt).
+This code is licensed under the Apache 2.0 License. See [LICENSE](LICENSE.txt).
 
 ## Copyright
-Copyright OpenSearch Contributors. See [NOTICE.txt](NOTICE.txt) for details.
+Copyright OpenSearch Contributors. See [NOTICE](NOTICE) for details.

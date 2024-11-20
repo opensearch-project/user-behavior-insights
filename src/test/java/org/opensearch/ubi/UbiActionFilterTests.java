@@ -38,6 +38,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -158,7 +159,7 @@ public class UbiActionFilterTests extends OpenSearchTestCase {
 
         ubiActionFilter.apply(task, "ubi", request, listener, chain);
 
-        verify(client, never()).index(any(), any());
+        verify(client, atMostOnce()).index(any(), any());
 
     }
 
