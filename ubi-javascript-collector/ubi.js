@@ -11,7 +11,8 @@ import axios from 'axios';
 export class UbiClient {
     constructor(baseUrl) {
         // point to the specific middleware endpoint for receiving events
-        this.url = `${baseUrl}/ubi_events`;
+        this.eventUrl = `${baseUrl}/ubi_events`;
+        this.queryUrl = `${baseUrl}/ubi_queries`;
         
         this.rest_config = {
             headers: {
@@ -51,12 +52,34 @@ export class UbiClient {
             console.log('POSTing event: ' + json);
         }
 
-        return this._post(json);
+        return this._post(json, this.eventUrl);
+    }
+    
+    async trackQuery(e, message = null, message_type = null) {
+        if (message) {
+            if (e.message) {
+                e['extra_info'] = message;
+                if (message_type) {
+                    e['extra_info_type'] = message_type;
+                }
+            } else {
+                e.message = message;
+                e.message_type = message_type;
+            }
+        }
+
+        // Data prepper wants an array of JSON.
+        let json = JSON.stringify([e]);
+        if (this.verbose > 0) {
+            console.log('POSTing event: ' + json);
+        }
+
+        return this._post(json,this.queryUrl);
     }
 
-    async _post(data) {
+    async _post(data,url) {
         try {
-            const response = await this.rest_client.post(this.url, data, this.rest_config);
+            const response = await this.rest_client.post(url, data, this.rest_config);
             return response.data;
         } catch (error) {
             console.error(error);
@@ -66,10 +89,10 @@ export class UbiClient {
 
 export class UbiEvent {
   /**
-   * This maps to the UBI Specification at https://github.com/o19s/ubi
+   * This maps to the UBI Event Specification at https://github.com/o19s/ubi
    */
-  constructor(action_name, client_id, session_id, query_id, event_attributes, message = null) {
-    this.application = "Chorus"
+  constructor(application, action_name, client_id, session_id, query_id, event_attributes, message = null) {
+    this.application = application;
     this.action_name = action_name;
     this.query_id = query_id;
     this.session_id = session_id;        
@@ -120,5 +143,45 @@ export class UbiEventAttributes {
     
     this.object = { ...this.object, ...filteredDetails };
    
+  }
+}
+
+export class UbiQuery {
+  /**
+   * This maps to the UBI Query Specification at https://github.com/o19s/ubi
+   */
+  constructor(application, client_id, query_id, user_query, object_id_field, query_attributes = {}, message = null) {
+    this.application = application;
+    this.query_id = query_id;
+    this.user_query = user_query;        
+    this.client_id = client_id;
+    this.object_id_field = object_id_field;
+    this.timestamp = new Date().toISOString();
+    this.message_type = 'INFO';
+    this.message = message || '';     // Default to an empty string if no message
+    this.query_attributes = query_attributes
+  }
+
+  setMessage(message, message_type = 'INFO') {
+    this.message = message;
+    this.message_type = message_type;
+  }
+
+  /**
+   * Use to suppress null objects in the json output
+   * @param key 
+   * @param value 
+   * @returns 
+   */
+  static replacer(key, value) {
+    return (value == null) ? undefined : value; // Return undefined for null values
+  }
+
+  /**
+   * 
+   * @returns json string
+   */
+  toJson() {
+    return JSON.stringify(this, UbiEvent.replacer);
   }
 }
