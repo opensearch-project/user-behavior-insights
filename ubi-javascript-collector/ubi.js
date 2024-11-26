@@ -1,12 +1,21 @@
-/**
-ubi.js is downloaded from https://github.com/opensearch-project/user-behavior-insights/tree/main/ubi-javascript-collector.
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ */
+ 
+/*
+ubi.js is sourced from https://github.com/opensearch-project/user-behavior-insights/tree/main/ubi-javascript-collector.
 */
 
 import axios from 'axios';
 
 /**
- * Methods and client to talk directly with the OpenSearch UBI plugin
- * for logging events
+ * Methods and client to manage tracking queries and events that follow the User Behavior Insights specification.
  */
 export class UbiClient {
     constructor(baseUrl) {
