@@ -79,7 +79,12 @@
 
   - do:
       indices.refresh:
-        index: [_all]
+        index: [ubi_queries]
+
+  - do:
+      cluster.health:
+        index: [ubi_queries]
+        wait_for_no_initializing_shards: true
 
   - do:
       count:

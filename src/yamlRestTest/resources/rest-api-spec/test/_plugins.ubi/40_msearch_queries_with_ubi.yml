@@ -1,5 +1,5 @@
 ---
-"Query":
+"msearch Queries":
 
   - do:
       ubi.initialize: {}
@@ -20,7 +20,7 @@
         index: ecommerce1
         body:
           mappings:
-            { "properties": { "category": { "type": "text" }, "timestamp": { "type": "date", "format": "strict_date_time" } } }
+            { "properties": { "category": { "type": "text" } } }
 
   - match: { acknowledged: true }
   - match: { index: "ecommerce1"}
@@ -53,31 +53,25 @@
 
   - do:
       indices.refresh:
-        index: [ "ecommerce1" ]
-
-  - do:
-      indices.refresh:
-        index: [ "ecommerce2" ]
+        index: [ "ecommerce1", "ecommerce2" ]
 
   - do:
       msearch:
         rest_total_hits_as_int: true
         body:
           - index: ecommerce1
-          - {query: {match_all: {}}, "ext": {"ubi": {"query_id": "12345"}}}
+          - {query: {match_all: {} }, ext: {ubi: {query_id: "12345"}}}
           - index: ecommerce2
-          - {query: {match_all: {}}, "ext": {"ubi": {"query_id": "12345"}}}
+          - {query: {match_all: {} }, ext: {ubi: {query_id: "09876"}}}
 
   - match:  { responses.0.hits.total: 1}
   - match:  { responses.1.hits.total: 1}
 
   - do:
-      cluster.health:
-        index: [ubi_queries]
-        wait_for_no_initializing_shards: true
-
+      indices.refresh:
+        index: [ "ubi_queries" ]
   - do:
-      indices.exists:
+      count:
         index: ubi_queries
 
-  - is_true: ''
+  - match: { count: 2 }
