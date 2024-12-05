@@ -235,7 +235,7 @@ public class UbiActionFilter implements ActionFilter {
         source.put("timestamp", queryRequest.getTimestamp());
         source.put("query_id", queryRequest.getQueryId());
         source.put("query_response_id", queryRequest.getQueryResponse().getQueryResponseId());
-        source.put("query_response_object_ids", queryRequest.getQueryResponse().getQueryResponseObjectIds());
+        source.put("query_response_hit_ids", queryRequest.getQueryResponse().getQueryResponseHitIds());
         source.put("client_id", queryRequest.getClientId());
         source.put("application", queryRequest.getApplication());
         source.put("user_query", queryRequest.getUserQuery());
@@ -279,7 +279,7 @@ public class UbiActionFilter implements ActionFilter {
 
         span.addAttribute("ubi.query_response.response_id", queryRequest.getQueryResponse().getQueryResponseId());
         span.addAttribute("ubi.query_response.query_id", queryRequest.getQueryResponse().getQueryId());
-        span.addAttribute("ubi.query_response.response_id", String.join(",", queryRequest.getQueryResponse().getQueryResponseObjectIds()));
+        span.addAttribute("ubi.query_response.response_id", String.join(",", queryRequest.getQueryResponse().getQueryResponseHitIds()));
 
         span.endSpan();
 
