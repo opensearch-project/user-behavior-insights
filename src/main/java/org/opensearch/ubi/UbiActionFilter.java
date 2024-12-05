@@ -204,14 +204,14 @@ public class UbiActionFilter implements ActionFilter {
                     try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
                         final int status = response.getStatusLine().getStatusCode();
                         if (status != 200) {
-                            LOGGER.error("Unexpected response status from Data Prepper: {}", status);
-                            return false;
+                            LOGGER.error("Unexpected response status from Data Prepper: " + status);
+                            return Boolean.FALSE;
                         }
                     } catch (Exception ex) {
                         LOGGER.error("Unable to send query to Data Prepper", ex);
-                        return false;
+                        return Boolean.FALSE;
                     }
-                    return true;
+                    return Boolean.TRUE;
                 });
 
             }
@@ -235,7 +235,7 @@ public class UbiActionFilter implements ActionFilter {
         source.put("timestamp", queryRequest.getTimestamp());
         source.put("query_id", queryRequest.getQueryId());
         source.put("query_response_id", queryRequest.getQueryResponse().getQueryResponseId());
-        source.put("query_response_object_ids", queryRequest.getQueryResponse().getQueryResponseObjectIds());
+        source.put("query_response_hit_ids", queryRequest.getQueryResponse().getQueryResponseHitIds());
         source.put("client_id", queryRequest.getClientId());
         source.put("application", queryRequest.getApplication());
         source.put("user_query", queryRequest.getUserQuery());
@@ -246,8 +246,9 @@ public class UbiActionFilter implements ActionFilter {
             source.put("query", queryRequest.getQuery());
         }
 
-        // Build the index request.
-        final IndexRequest indexRequest = new IndexRequest(UBI_QUERIES_INDEX).source(source, XContentType.JSON);
+        final IndexRequest indexRequest = new IndexRequest();
+        indexRequest.index(UBI_QUERIES_INDEX);
+        indexRequest.source(source, XContentType.JSON);
 
         client.index(indexRequest, new ActionListener<>() {
 
@@ -256,7 +257,7 @@ public class UbiActionFilter implements ActionFilter {
 
             @Override
             public void onFailure(Exception e) {
-                LOGGER.error("Unable to index query into UBI index.", e);
+                LOGGER.error("Unable to index query into " + UBI_QUERIES_INDEX + ".", e);
             }
 
         });
@@ -279,7 +280,7 @@ public class UbiActionFilter implements ActionFilter {
 
         span.addAttribute("ubi.query_response.response_id", queryRequest.getQueryResponse().getQueryResponseId());
         span.addAttribute("ubi.query_response.query_id", queryRequest.getQueryResponse().getQueryId());
-        span.addAttribute("ubi.query_response.response_id", String.join(",", queryRequest.getQueryResponse().getQueryResponseObjectIds()));
+        span.addAttribute("ubi.query_response.response_id", String.join(",", queryRequest.getQueryResponse().getQueryResponseHitIds()));
 
         span.endSpan();
 

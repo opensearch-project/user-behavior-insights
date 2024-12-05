@@ -11,6 +11,7 @@ package org.opensearch.ubi;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.opensearch.action.admin.indices.create.CreateIndexRequest;
+import org.opensearch.action.admin.indices.create.CreateIndexResponse;
 import org.opensearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.opensearch.client.node.NodeClient;
@@ -80,22 +81,44 @@ public class UbiRestHandler extends BaseRestHandler {
                                     getResourceFile(EVENTS_MAPPING_FILE)
                             ).settings(indexSettings);
 
-                            client.admin().indices().create(createEventsIndexRequest);
+                            client.admin().indices().create(createEventsIndexRequest, new ActionListener<>() {
+                                @Override
+                                public void onResponse(CreateIndexResponse createIndexResponse) {
+                                    LOGGER.debug("ubi_queries index created.");
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    LOGGER.error("Unable to create ubi_queries index", e);
+                                }
+                            });
 
                             // Create the UBI queries index.
                             final CreateIndexRequest createQueriesIndexRequest = new CreateIndexRequest(UBI_QUERIES_INDEX).mapping(
                                     getResourceFile(QUERIES_MAPPING_FILE)
                             ).settings(indexSettings);
 
-                            client.admin().indices().create(createQueriesIndexRequest);
+                            client.admin().indices().create(createQueriesIndexRequest, new ActionListener<>() {
+                                @Override
+                                public void onResponse(CreateIndexResponse createIndexResponse) {
+                                    LOGGER.debug("ubi_events index created.");
+                                }
 
+                                @Override
+                                public void onFailure(Exception e) {
+                                    LOGGER.error("Unable to create ubi_events index", e);
+                                }
+                            });
+
+                        } else {
+                            LOGGER.debug("UBI indexes already exist.");
                         }
 
                     }
 
                     @Override
                     public void onFailure(Exception ex) {
-                        LOGGER.error("Error creating UBI indexes.", ex);
+                        LOGGER.error("Error determining if UBI indexes exist.", ex);
                     }
 
                 });

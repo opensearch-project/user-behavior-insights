@@ -17,18 +17,18 @@ public class QueryResponse {
 
     private final String queryId;
     private final String queryResponseId;
-    private final List<String> queryResponseObjectIds;
+    private final List<String> queryResponseHitIds;
 
     /**
      * Creates a query response.
      * @param queryId The ID of the query.
      * @param queryResponseId The ID of the query response.
-     * @param queryResponseObjectIds A list of IDs for the hits in the query.
+     * @param queryResponseHitIds A list of IDs for the hits in the query.
      */
-    public QueryResponse(final String queryId, final String queryResponseId, final List<String> queryResponseObjectIds) {
+    public QueryResponse(final String queryId, final String queryResponseId, final List<String> queryResponseHitIds) {
         this.queryId = queryId;
         this.queryResponseId = queryResponseId;
-        this.queryResponseObjectIds = queryResponseObjectIds;
+        this.queryResponseHitIds = queryResponseHitIds;
     }
 
     /**
@@ -51,8 +51,8 @@ public class QueryResponse {
      * Gets the list of query response hit IDs.
      * @return A list of query response hit IDs.
      */
-    public List<String> getQueryResponseObjectIds() {
-        return queryResponseObjectIds;
+    public List<String> getQueryResponseHitIds() {
+        return queryResponseHitIds;
     }
 
 }
