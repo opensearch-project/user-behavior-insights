@@ -330,8 +330,8 @@ def make_ubi_event(gen_config, row):
             "object": {
                 "object_id": row["object_id"],
                 "object_id_field": row["object_id_field"],
-                "rank": row["rank"],
             },
+            "rank": row["rank"],
         }
     }
     return ubi_event
