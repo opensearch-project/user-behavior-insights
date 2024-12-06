@@ -332,7 +332,7 @@ def make_ubi_event(gen_config, row):
                 "object_id_field": row["object_id_field"],
             },
             "position": {
-                "index": row["position"],
+                "ordinal": row["position"],
             },
         }
     }
