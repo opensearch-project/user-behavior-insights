@@ -123,7 +123,7 @@ def make_query_sampler(gen_config, top_queries, query, df_g):
     a = 1000 * dfn.rating * gen_config.click_rates + 0.5
     b = 1000 - a + 49.5
     dfn["p_click"] = np.random.beta(a, b) # use beta to make 0 rating results have sometimes a click
-    dfn["rank"] = np.arange(dfn.shape[0])
+    dfn["position"] = np.arange(dfn.shape[0])
     dfn["p_query"] = top_queries[top_queries["query"]==query].p.values[0]
     return dfn.reset_index(drop=True)
 
@@ -140,7 +140,7 @@ def make_result_sample_per_query(gen_config, top_queries, df_examples):
      - rating: Amazon ESCI score
      - ranking: noise perturbed rating
      - p: probability of click
-     - rank: 0-based result position/rank
+     - position: 0-based result position
      - p_query: probability of sampling with query
      - exp_rating: actual expected rating after sampling (after taking into account result ranking)
     """
@@ -168,7 +168,7 @@ def compute_exp_ctr_per_pos(gen_config, result_sample_per_query):
     ref_judg = pd.concat([df for _, df in result_sample_per_query.items()])
     tmp_df = ref_judg
     tmp_df["wp"] = tmp_df.p_click * tmp_df.p_query
-    tmp_df = tmp_df[["rank", "wp", "p_query"]].groupby("rank").sum()
+    tmp_df = tmp_df[["position", "wp", "p_query"]].groupby("position").sum()
     exp_ctr = tmp_df.wp / tmp_df.p_query
     return exp_ctr
 
@@ -188,7 +188,7 @@ def prepare_data_generation(gen_config, esci_df):
 
     console.print("Expected judgment under COEC for top 5 documents of top 3 queries:")
     for i in range(3):
-        console.print(judg_dict[top_queries.iloc[i]["query"]][["query", "product_id", "rank", "rating", "p_click", "exp_rating"]].head(5))
+        console.print(judg_dict[top_queries.iloc[i]["query"]][["query", "product_id", "position", "rating", "p_click", "exp_rating"]].head(5))
 
     return top_queries, judg_dict
 
@@ -211,7 +211,7 @@ def simulate_events(gen_config, top_queries, result_sample_per_query):
         q = np.random.choice(top_queries["query"], p=top_queries["p"])
         judg_df = result_sample_per_query[q].copy()
         click_event = np.random.binomial(n=1, p=judg_df.p_click)
-        judg_df = judg_df[["product_id", "rank"]]
+        judg_df = judg_df[["product_id", "position"]]
         judg_df = judg_df.rename(columns={"product_id": "object_id"})
         judg_df["object_id_field"] = "product_id"
 
@@ -332,7 +332,7 @@ def make_ubi_event(gen_config, row):
                 "object_id_field": row["object_id_field"],
             },
             "position": {
-                "index": row["rank"],
+                "index": row["position"],
             },
         }
     }
