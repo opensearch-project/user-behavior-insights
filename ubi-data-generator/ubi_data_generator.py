@@ -230,6 +230,7 @@ def simulate_events(gen_config, top_queries, result_sample_per_query):
         judg_df["application"] = gen_config.application
         judg_df["action_name"] = "impression"
         judg_df["query_id"] = query_id
+        judg_df["user_query"] = q
         judg_df["session_id"] = session_id
         judg_df["client_id"] = client_id
         judg_df["timestamp"] = formatted_current_time
@@ -324,6 +325,7 @@ def make_ubi_event(gen_config, row):
         "session_id": row["session_id"],
         "client_id": row["client_id"],
         "timestamp": row["timestamp"],
+        "user_query": row["user_query"],
         "message_type": None,
         "message": None,
         "event_attributes": {
