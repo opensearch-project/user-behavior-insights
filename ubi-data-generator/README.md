@@ -5,13 +5,13 @@ The `ubi_data_generator.py` script generates UBI tracking events that can be use
 UBI related infrastructure such as dashboards and evaluation frameworks.
 
 The script requires input judgments for query and document pairs.
-At the moment it only supports the Amazon ESCI dataset as an input.
+At the moment it only supports the [Amazon ESCI dataset](https://github.com/amazon-science/esci-data) as an input. Using the script requires you to reference a local copy of this dataset.
 
 The script uses a click model that facilitates the testing of judgment calculations
 based on Clicks over Expected Clicks (COEC).
 We plan to release additional click models in the future.
 
-## Instalation
+## Installation
 
 ```
 pip install -r requirements.txt
@@ -19,7 +19,7 @@ pip install -r requirements.txt
 
 ## Usage
 
-Generate query, view and click events for the Amazon ESCI dataset for the top 1000 queries, altogether
+Generate query, view and click events for the [Amazon ESCI dataset](https://github.com/amazon-science/esci-data) for the top 1000 queries, altogether
 generate 100k query events and populate into OpenSearch.
 
 ```
