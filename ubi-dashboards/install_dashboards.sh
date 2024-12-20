@@ -20,7 +20,7 @@ fi
 
 echo "${MAJOR}Using Open Search and Open Search Dashboards at $opensearch and $opensearch_dashboard respectively.${RESET}"
 
-echo "${MAJOR}\nInstalling Quality Evaluation Framework Dashboards${RESET}"
+echo "${MAJOR}\nInstalling User Behavior Insights Dashboards${RESET}"
 curl -X POST "http://$opensearch_dashboard/api/saved_objects/_import?overwrite=true" -H "osd-xsrf: true" --form file=@ubi_dashboard.ndjson > /dev/null
 
 echo "${MAJOR}The UBI Dashboards were successfully installed${RESET}"
