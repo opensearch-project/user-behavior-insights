@@ -42,21 +42,21 @@ export class UbiClient {
         this.verbose = 0; // Default value for verbose
     }
 
-    async trackEvent(e, message = null, message_type = null) {
+    async trackEvent(event, message = null, message_type = null) {
         if (message) {
-            if (e.message) {
-                e['extra_info'] = message;
+            if (event.message) {
+                event['extra_info'] = message;
                 if (message_type) {
-                    e['extra_info_type'] = message_type;
+                    event['extra_info_type'] = message_type;
                 }
             } else {
-                e.message = message;
-                e.message_type = message_type;
+                event.message = message;
+                event.message_type = message_type;
             }
         }
 
         // Data prepper wants an array of JSON.
-        let json = JSON.stringify([e]);
+        let json = JSON.stringify([event]);
         if (this.verbose > 0) {
             console.log('POSTing event: ' + json);
         }
@@ -64,23 +64,23 @@ export class UbiClient {
         return this._post(json, this.eventUrl);
     }
     
-    async trackQuery(e, message = null, message_type = null) {
+    async trackQuery(query, message = null, message_type = null) {
         if (message) {
-            if (e.message) {
-                e['extra_info'] = message;
+            if (query.message) {
+                query['extra_info'] = message;
                 if (message_type) {
-                    e['extra_info_type'] = message_type;
+                    query['extra_info_type'] = message_type;
                 }
             } else {
-                e.message = message;
-                e.message_type = message_type;
+                query.message = message;
+                query.message_type = message_type;
             }
         }
 
         // Data prepper wants an array of JSON.
-        let json = JSON.stringify([e]);
+        let json = JSON.stringify([query]);
         if (this.verbose > 0) {
-            console.log('POSTing event: ' + json);
+            console.log('POSTing query: ' + json);
         }
 
         return this._post(json,this.queryUrl);
@@ -138,7 +138,7 @@ export class UbiEvent {
 }
 
 export class UbiEventAttributes {
-  constructor(idField, id = null, description = null, details = null) {
+  constructor(idField, id = null, description = null, details = null, position = null) {
     this.object = {
       object_id: id,
       object_id_field: idField,
@@ -151,29 +151,43 @@ export class UbiEventAttributes {
     var { object_id, object_id_field, description, ...filteredDetails } = details;
     
     this.object = { ...this.object, ...filteredDetails };
-   
+
+    // validate positional information
+    // either ordinal or xy have to be set with ordinal, x and y being numbers
+    if (!position) {
+      throw new Error("The 'position' parameter is required.");
+    }
+    const hasOrdinal = 'ordinal' in position && Number.isInteger(position.ordinal);
+    const hasXY =
+      'xy' in position &&
+      typeof position.xy === 'object' &&
+      'x' in position.xy &&
+      'y' in position.xy &&
+      typeof position.xy.x === 'number' &&
+      typeof position.xy.y === 'number';
+
+    if (!hasOrdinal && !hasXY) {
+      throw new Error(
+        "The 'position' object must have either an 'ordinal' property (integer) or an 'xy' property (object with 'x' and 'y' as numbers)." + position.ordinal
+      );
+    }
+
+    this.position = { ...position }; // Merge position into top-level property
   }
 }
 
-export class UbiQuery {
+export class UbiQueryRequest {
   /**
-   * This maps to the UBI Query Specification at https://github.com/o19s/ubi
+   * This maps to the UBI Query Request Specification at https://github.com/o19s/ubi
    */
-  constructor(application, client_id, query_id, user_query, object_id_field, query_attributes = {}, message = null) {
+  constructor(application, client_id, query_id, user_query, object_id_field, query_attributes = {}) {
     this.application = application;
-    this.query_id = query_id;
-    this.user_query = user_query;        
+    this.query_id = query_id;    
     this.client_id = client_id;
+    this.user_query = user_query;        
+    this.query_attributes = query_attributes    
     this.object_id_field = object_id_field;
     this.timestamp = new Date().toISOString();
-    this.message_type = 'INFO';
-    this.message = message || '';     // Default to an empty string if no message
-    this.query_attributes = query_attributes
-  }
-
-  setMessage(message, message_type = 'INFO') {
-    this.message = message;
-    this.message_type = message_type;
   }
 
   /**
