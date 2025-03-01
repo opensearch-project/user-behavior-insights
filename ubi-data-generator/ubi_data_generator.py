@@ -26,8 +26,8 @@ parser.add_argument('--datetime-start', help='Date and time of first query event
 parser.add_argument('--seconds-between-clicks', help='Average seconds between clicks', default=1.0, type=float)
 parser.add_argument('--generate-csv', help='Generate datasets and save in CSVs', default=False, action="store_true")
 parser.add_argument('--generate-ndjson', help='Generate datasets and save in ndjson files', default=False, action="store_true")
-parser.add_argument('--generate-open-search', help='Generate datasets and save in Open Search', default=False, action="store_true")
-parser.add_argument('--open-search-url', help='Open Search URL', default="http://localhost:9200", action="store")
+parser.add_argument('--generate-opensearch', help='Generate datasets and save in OpenSearch', default=False, action="store_true")
+parser.add_argument('--opensearch-url', help='OpenSearch URL', default="http://localhost:9200", action="store")
 
 args = parser.parse_args()
 
@@ -77,7 +77,7 @@ class GenConfig:
     time_start: datetime
     avg_time_between_clicks: timedelta
     click_rates: list[float]
-    open_search_url: str
+    opensearch_url: str
         
     def get_avg_time_between_queries(self):
         return self.time_period / self.num_query_events
@@ -93,7 +93,7 @@ def create_gen_config(args):
         time_start=datetime.strptime(args.datetime_start, "%Y/%m/%d"),
         avg_time_between_clicks=timedelta(seconds=args.seconds_between_clicks),
         click_rates=0.1/np.log(np.arange(args.num_search_results)*4+2.7),
-        open_search_url=args.open_search_url,
+        opensearch_url=args.opensearch_url,
     )
     console.print("[bold cyan]Data Generation Configuration:[/bold cyan]", gen_config)
     return gen_config
@@ -228,8 +228,9 @@ def simulate_events(gen_config, top_queries, result_sample_per_query):
         }))
 
         judg_df["application"] = gen_config.application
-        judg_df["action_name"] = "view"
+        judg_df["action_name"] = "impression"
         judg_df["query_id"] = query_id
+        judg_df["user_query"] = q
         judg_df["session_id"] = session_id
         judg_df["client_id"] = client_id
         judg_df["timestamp"] = formatted_current_time
@@ -281,9 +282,9 @@ def save_to_ndjson(gen_config, event_generator):
                 f.write(json.dumps(d) + "\n")
 
 
-def populate_open_search(gen_config, event_generator):
-    console.print("[bold cyan]Indexing data into Open Search[/bold cyan]")
-    client = OpenSearch(gen_config.open_search_url, use_ssl=False)
+def populate_opensearch(gen_config, event_generator):
+    console.print("[bold cyan]Indexing data into OpenSearch[/bold cyan]")
+    client = OpenSearch(gen_config.opensearch_url, use_ssl=False)
 
     for queries, events in tqdm(event_generator, total=gen_config.num_query_events/1000, desc="Indexing queries in units of 1000"):
         client.bulk(body=convert_to_ndjson(gen_config, queries, events))
@@ -324,6 +325,7 @@ def make_ubi_event(gen_config, row):
         "session_id": row["session_id"],
         "client_id": row["client_id"],
         "timestamp": row["timestamp"],
+        "user_query": row["user_query"],
         "message_type": None,
         "message": None,
         "event_attributes": {
@@ -332,7 +334,7 @@ def make_ubi_event(gen_config, row):
                 "object_id_field": row["object_id_field"],
             },
             "position": {
-                "index": row["position"],
+                "ordinal": row["position"],
             },
         }
     }
@@ -344,8 +346,8 @@ def main(args):
     gen_config = create_gen_config(args)
     top_queries, judg_dict = prepare_data_generation(gen_config, esci_df)
 
-    if not args.generate_csv and not args.generate_open_search and not args.generate_ndjson:
-        console.print("[red bold]You have to specify either --generate-csv, --generate-ndjson or --generate-open-search")
+    if not args.generate_csv and not args.generate_opensearch and not args.generate_ndjson:
+        console.print("[red bold]You have to specify either --generate-csv, --generate-ndjson or --generate-opensearch")
         return
 
     event_generator = simulate_events(gen_config, top_queries, judg_dict)
@@ -354,7 +356,7 @@ def main(args):
         save_to_csv(gen_config, event_generator)
     if args.generate_ndjson:
         save_to_ndjson(gen_config, event_generator)
-    elif args.generate_open_search:
-        populate_open_search(gen_config, event_generator)
+    elif args.generate_opensearch:
+        populate_opensearch(gen_config, event_generator)
 
 main(args)

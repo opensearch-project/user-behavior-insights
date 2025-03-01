@@ -1,6 +1,6 @@
-FROM opensearchstaging/opensearch:2.18.0
+FROM opensearchstaging/opensearch:3.0.0
 
-ARG UBI_VERSION="2.18.0.2"
+ARG UBI_VERSION="3.0.0.0-SNAPSHOT"
 
 COPY ./build/distributions/opensearch-ubi-${UBI_VERSION}.zip /tmp/
 
