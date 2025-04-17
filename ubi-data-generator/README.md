@@ -23,13 +23,13 @@ Generate query, view and click events for the [Amazon ESCI dataset](https://gith
 generate 100k query events and populate into OpenSearch.
 
 ```
-python ubi_data_generator.py --esci-dataset ../../../../esci-data/shopping_queries_dataset --num-unique-queries 1000 --num-query-events 100000 --generate-open-search
+python ubi_data_generator.py --esci-dataset ../../esci-data/shopping_queries_dataset --num-unique-queries 1000 --num-query-events 100000 --generate-opensearch
 ```
 
 Alternatively you can save the generated events into an ndjson file for later ingestion through the bulk endpoint:
 
 ```
-python ubi_data_generator.py --esci-dataset ../../../../esci-data/shopping_queries_dataset --num-unique-queries 1000 --num-query-events 100000 --generate-ndjson
+python ubi_data_generator.py --esci-dataset ../../esci-data/shopping_queries_dataset --num-unique-queries 1000 --num-query-events 100000 --generate-ndjson
 ```
 
 ## Interpreting the output
