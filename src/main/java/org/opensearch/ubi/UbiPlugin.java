@@ -9,7 +9,6 @@
 package org.opensearch.ubi;
 
 import org.opensearch.action.support.ActionFilter;
-import org.opensearch.client.Client;
 import org.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.opensearch.cluster.node.DiscoveryNodes;
 import org.opensearch.cluster.service.ClusterService;
@@ -33,6 +32,7 @@ import org.opensearch.script.ScriptService;
 import org.opensearch.telemetry.metrics.MetricsRegistry;
 import org.opensearch.telemetry.tracing.Tracer;
 import org.opensearch.threadpool.ThreadPool;
+import org.opensearch.transport.client.Client;
 import org.opensearch.ubi.ext.UbiParametersExtBuilder;
 import org.opensearch.watcher.ResourceWatcherService;
 
