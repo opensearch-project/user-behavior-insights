@@ -10,9 +10,9 @@ package org.opensearch.ubi;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.opensearch.client.Client;
 import org.opensearch.plugins.SearchPlugin;
 import org.opensearch.test.OpenSearchTestCase;
+import org.opensearch.transport.client.Client;
 
 import java.util.List;
 

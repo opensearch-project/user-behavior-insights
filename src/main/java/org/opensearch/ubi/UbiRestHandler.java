@@ -14,7 +14,6 @@ import org.opensearch.action.admin.indices.create.CreateIndexRequest;
 import org.opensearch.action.admin.indices.create.CreateIndexResponse;
 import org.opensearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
-import org.opensearch.client.node.NodeClient;
 import org.opensearch.cluster.metadata.IndexMetadata;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.common.util.io.Streams;
@@ -23,6 +22,7 @@ import org.opensearch.core.rest.RestStatus;
 import org.opensearch.rest.BaseRestHandler;
 import org.opensearch.rest.BytesRestResponse;
 import org.opensearch.rest.RestRequest;
+import org.opensearch.transport.client.node.NodeClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

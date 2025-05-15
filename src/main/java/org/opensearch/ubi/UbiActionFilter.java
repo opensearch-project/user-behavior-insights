@@ -23,7 +23,6 @@ import org.opensearch.action.search.SearchRequest;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.action.support.ActionFilter;
 import org.opensearch.action.support.ActionFilterChain;
-import org.opensearch.client.Client;
 import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.action.ActionResponse;
@@ -33,11 +32,10 @@ import org.opensearch.tasks.Task;
 import org.opensearch.telemetry.tracing.Span;
 import org.opensearch.telemetry.tracing.SpanBuilder;
 import org.opensearch.telemetry.tracing.Tracer;
+import org.opensearch.transport.client.Client;
 import org.opensearch.ubi.ext.UbiParameters;
 
 import java.io.IOException;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -200,19 +198,14 @@ public class UbiActionFilter implements ActionFilter {
                 httpPost.setEntity(new StringEntity(queryRequest.toString()));
                 httpPost.setHeader("Content-type", "application/json");
 
-                AccessController.doPrivileged((PrivilegedAction<Boolean>) () -> {
-                    try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-                        final int status = response.getStatusLine().getStatusCode();
-                        if (status != 200) {
-                            LOGGER.error("Unexpected response status from Data Prepper: " + status);
-                            return Boolean.FALSE;
-                        }
-                    } catch (Exception ex) {
-                        LOGGER.error("Unable to send query to Data Prepper", ex);
-                        return Boolean.FALSE;
+                try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                    final int status = response.getStatusLine().getStatusCode();
+                    if (status != 200) {
+                        LOGGER.error("Unexpected response status from Data Prepper: " + status);
                     }
-                    return Boolean.TRUE;
-                });
+                } catch (Exception ex) {
+                    LOGGER.error("Unable to send query to Data Prepper", ex);
+                }
 
             }
 
