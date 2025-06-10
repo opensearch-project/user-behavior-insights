@@ -1,5 +1,4 @@
 import org.opensearch.gradle.test.RestIntegTestTask
-
 import java.util.concurrent.Callable
 
 apply plugin: 'java'
@@ -24,9 +23,6 @@ opensearchplugin {
     licenseFile rootProject.file('LICENSE')
     noticeFile rootProject.file('NOTICE')
 }
-
-group = 'org.opensearch'
-version = "${ubiVersion}"
 
 // disabling some unnecessary validations for this plugin
 testingConventions.enabled = false
@@ -61,7 +57,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.opensearch.gradle:build-tools:${opensearchVersion}"
+        classpath "org.opensearch.gradle:build-tools:${opensearch_version}"
     }    
 }
 
@@ -84,9 +80,9 @@ dependencies {
     api "commons-logging:commons-logging:${versions.commonslogging}"
     zipArchive group: 'org.opensearch.plugin', name:'opensearch-job-scheduler', version: "${opensearch_build}"
 
-    testImplementation("org.opensearch:opensearch-agent-bootstrap:${opensearchVersion}")
+    testImplementation("org.opensearch:opensearch-agent-bootstrap:${opensearch_version}")
 
-    yamlRestTestImplementation("org.opensearch:opensearch-agent-bootstrap:${opensearchVersion}")
+    yamlRestTestImplementation("org.opensearch:opensearch-agent-bootstrap:${opensearch_version}")
     yamlRestTestImplementation "org.apache.logging.log4j:log4j-core:${versions.log4j}"
 }
 
@@ -96,6 +92,22 @@ test {
 
 yamlRestTest {
     systemProperty 'tests.security.manager', 'false'
+}
+
+allprojects {
+    group = 'org.opensearch'
+    version = opensearch_version.tokenize('-')[0] + '.0'
+    if (buildVersionQualifier) {
+        version += "-${buildVersionQualifier}"
+    }
+    if (isSnapshot) {
+        version += "-SNAPSHOT"
+    }
+
+    plugins.withId('java') {
+        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_21
+    }
 }
 
 publishing {
@@ -108,6 +120,10 @@ publishing {
                 password "$System.env.SONATYPE_PASSWORD"
             }
         }
+        maven {
+            name = 'staging'
+            url = "${rootProject.buildDir}/local-staging-repo"
+        }
     }
     publications {
         pluginZip(MavenPublication) { publication ->
@@ -115,17 +131,30 @@ publishing {
                 name = "opensearch-ubi"
                 description = "OpenSearch User Behavior Insights plugin"
                 groupId = "org.opensearch.plugin"
-                licenses {
-                    license {
-                        name = "The Apache License, Version 2.0"
-                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-                    }
+            }
+        }
+        all {
+            pom {
+                name = "opensearch-ubi"
+                description = "OpenSearch User Behavior Insights plugin"
+            }
+            pom.withXml { XmlProvider xml ->
+                Node node = xml.asNode()
+                node.appendNode('inceptionYear', '2021')
+                if (!node.'description') {
+                    node.appendNode('description', description)
                 }
-                developers {
-                    developer {
-                        name = "OpenSearch"
-                        url = "https://github.com/opensearch-project/user-behavior-insights"
-                    }
+
+                if (!node.'licenses') {
+                    Node license = node.appendNode('licenses').appendNode('license')
+                    license.appendNode('name',  "The Apache License, Version 2.0")
+                    license.appendNode('url', "http://www.apache.org/licenses/LICENSE-2.0.txt")
+                }
+
+                if (!node.'developers') {
+                    Node developer = node.appendNode('developers').appendNode('developer')
+                    developer.appendNode('name', 'OpenSearch')
+                    developer.appendNode('url', 'https://github.com/opensearch-project/user-behavior-insights')
                 }
             }
         }
