@@ -78,7 +78,7 @@ class GenConfig:
     avg_time_between_clicks: timedelta
     click_rates: list[float]
     opensearch_url: str
-        
+
     def get_avg_time_between_queries(self):
         return self.time_period / self.num_query_events
 
@@ -102,12 +102,12 @@ def create_gen_config(args):
 def make_top_queries(gen_config, df_examples):
     """
     Select top queries and compute sampling probability.
-    
+
     Columns:
      - query: query string
      - num_judgments: number of judgments in query
      - p: sampling probability
-    
+
     The sampling probability is naive, it's the normalized number of judgments
     """
     df_q_agg = df_examples[["query", "original_label"]].groupby("query").count().reset_index()
@@ -131,9 +131,9 @@ def make_query_sampler(gen_config, top_queries, query, df_g):
 def make_result_sample_per_query(gen_config, top_queries, df_examples):
     """
     Make a datastructure to facilitate sampling.
-    
+
     Returns a dictionary from query strings to dataframes
-    
+
     Columns:
      - query: query string
      - product_id: product id string
@@ -147,19 +147,19 @@ def make_result_sample_per_query(gen_config, top_queries, df_examples):
     judgments = df_examples[df_examples["query"].isin(top_queries["query"].values)]
     judgments = judgments[["query", "product_id", "rating", "weights"]].groupby(["query", "product_id"]).mean().reset_index()
     judgments = judgments.groupby("query").sample(gen_config.num_search_results, weights="weights")
-    
+
     judg_dict = {}
     for q, df_g in judgments.groupby("query"):
         judg_dict[q] = make_query_sampler(gen_config, top_queries, q, df_g)
-        
+
     exp_ctr = compute_exp_ctr_per_pos(gen_config, judg_dict)
-        
+
     # Now update the expected rating based on the achieved expected CTR
     for q in judg_dict.keys():
         q_df = judg_dict[q]
         q_df["exp_rating"] = q_df["p_click"] / exp_ctr
         judg_dict[q] = q_df
-        
+
     return judg_dict
 
 
@@ -202,6 +202,7 @@ def simulate_events(gen_config, top_queries, result_sample_per_query):
 
     for i in range(gen_config.num_query_events):
         new_delta = np.random.exponential(gen_config.get_avg_time_between_queries().seconds)
+
         current_time = current_time + timedelta(seconds=new_delta)
 
         # Format the timestamp
@@ -210,6 +211,7 @@ def simulate_events(gen_config, top_queries, result_sample_per_query):
         # Generation of Query and Impressions
         q = np.random.choice(top_queries["query"], p=top_queries["p"])
         judg_df = result_sample_per_query[q].copy()
+        random_numbers = np.random.rand(len(judg_df))
         click_event = np.random.binomial(n=1, p=judg_df.p_click)
         judg_df = judg_df[["product_id", "position"]]
         judg_df = judg_df.rename(columns={"product_id": "object_id"})
@@ -235,19 +237,23 @@ def simulate_events(gen_config, top_queries, result_sample_per_query):
         judg_df["client_id"] = client_id
         judg_df["timestamp"] = formatted_current_time
 
+        judg_df["search_config"] = np.where(random_numbers < 0.5, "teamA", "teamB")
+
         events.append(judg_df)
 
         # Generation of Clicks
         clicks = judg_df[click_event==1].copy()
+        random_numbers = np.random.rand(len(clicks))
         clicks["action_name"] = "click"
 
         time_deltas = np.random.exponential(gen_config.avg_time_between_clicks.seconds, clicks.shape[0])
         time_deltas = np.cumsum(time_deltas)
         time_deltas = pd.to_timedelta(time_deltas, unit='s')
-        
+
         # Add time deltas to the current time
         click_timestamps = pd.Series(current_time + time_deltas).dt.strftime("%Y-%m-%dT%H:%M:%S.%f").str[:-3] + "Z"
         clicks["timestamp"] = click_timestamps.values
+        clicks['search_config'] = np.where(random_numbers < 0.6, "teamA", "teamB")
 
         events.append(clicks)
 
@@ -260,7 +266,7 @@ def simulate_events(gen_config, top_queries, result_sample_per_query):
 
     events = pd.concat(events)
     queries = pd.concat(queries)
-    
+
     yield queries, events
 
 
@@ -332,6 +338,7 @@ def make_ubi_event(gen_config, row):
             "object": {
                 "object_id": row["object_id"],
                 "object_id_field": row["object_id_field"],
+                "search_config": row["search_config"],
             },
             "position": {
                 "ordinal": row["position"],

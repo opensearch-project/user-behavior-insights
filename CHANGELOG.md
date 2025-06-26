@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased 2.x]
 ### Added
 
+- [Enhancement] Adding a field to store the A/B TDI configs per event in the data generator. ([#102](https://github.com/opensearch-project/user-behavior-insights/pull/102))
+
 ### Dependencies
 
 ### Changed
