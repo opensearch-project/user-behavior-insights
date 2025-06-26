@@ -1,23 +1,23 @@
 # CHANGELOG
-All notable changes to this project are documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). See the [CONTRIBUTING guide](./CONTRIBUTING.md#Changelog) for instructions on how to add changelog entries.
+Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [Unreleased 2.x]
-### Added
+## [Unreleased]
 
-- [Enhancement] Adding a field to store the A/B TDI configs per event in the data generator. ([#102](https://github.com/opensearch-project/user-behavior-insights/pull/102))
+### Breaking Changes
 
-### Dependencies
+### Features
 
-### Changed
+### Enhancements
+* [Enhancement] Adding a field to store the A/B TDI configs per event in the data generator. ([#102](https://github.com/opensearch-project/user-behavior-insights/pull/102))
 
-### Deprecated
+### Bug Fixes
 
-### Removed
+### Infrastructure
+* Added end to end integration tests for experiments ([#154](https://github.com/opensearch-project/search-relevance/pull/154))
 
-### Fixed
+### Documentation
 
-### Security
+### Maintenance
 
-[Unreleased 2.x]: https://github.com/opensearch-project/user-behavior-insights/compare/2.14...2.x
+### Refactoring
