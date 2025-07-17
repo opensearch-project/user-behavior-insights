@@ -15,6 +15,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Infrastructure
 * Added end to end integration tests for experiments ([#154](https://github.com/opensearch-project/search-relevance/pull/154))
+* Upgrade gradle to 8.14 and higher JDK version to 24 ()
 
 ### Documentation
 
