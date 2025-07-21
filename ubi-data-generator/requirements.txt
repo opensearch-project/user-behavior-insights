@@ -1,4 +1,4 @@
-opensearch-py==2.8.0
+opensearch-py
 numpy
 pandas
 pyarrow
