@@ -22,3 +22,8 @@ jobs:
         with:
           cache-disabled: true
           arguments: -Dtests.security.manager=false assemble
+      - name: Upload Coverage Report
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
