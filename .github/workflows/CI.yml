@@ -12,7 +12,7 @@ jobs:
     with:
       product: opensearch
 
-  Check-search-relevance-linux:
+  Check-ubi-linux:
     needs: Get-CI-Image-Tag
     strategy:
       matrix:
@@ -51,7 +51,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  Check-search-relevance-windows:
+  Check-ubi-windows:
     strategy:
       matrix:
         java: [21, 24]
@@ -73,7 +73,7 @@ jobs:
         run: |
           ./gradlew check
 
-  Precommit-search-relevance-linux:
+  Precommit-ubi-linux:
     needs: Get-CI-Image-Tag
     strategy:
       matrix:
@@ -113,7 +113,7 @@ jobs:
           path: ./jacocoTestReport.xml
 
   Precommit-codecov:
-    needs: Precommit-search-relevance-linux
+    needs: Precommit-ubi-linux
     strategy:
       matrix:
         java: [21, 24]
