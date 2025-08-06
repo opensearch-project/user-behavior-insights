@@ -1,5 +1,6 @@
 import org.opensearch.gradle.test.RestIntegTestTask
 import java.util.concurrent.Callable
+import java.nio.file.Files
 
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -7,6 +8,8 @@ apply plugin: 'opensearch.opensearchplugin'
 apply plugin: 'opensearch.pluginzip'
 apply plugin: 'opensearch.yaml-rest-test'
 apply plugin: 'maven-publish'
+apply plugin: 'jacoco'
+apply plugin: 'com.form.diff-coverage'
 
 ext.opensearch_tmp_dir = rootProject.file('build/private/opensearch_tmp').absoluteFile
 opensearch_tmp_dir.mkdirs()
@@ -55,10 +58,12 @@ buildscript {
         maven { url "https://aws.oss.sonatype.org/content/repositories/snapshots" }
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
+        maven { url 'https://jitpack.io' }
     }
 
     dependencies {
         classpath "org.opensearch.gradle:build-tools:${opensearch_version}"
+        classpath "com.github.form-com.diff-coverage-gradle:diff-coverage:0.9.5"
     }    
 }
 
@@ -165,6 +170,19 @@ publishing {
 
 def _numNodes = findProperty('numNodes') as Integer ?: 1
 
+test {
+    include '**/*Tests.class'
+    systemProperty 'tests.security.manager', 'false'
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+    }
+}
+tasks.named("check").configure { dependsOn(jacocoTestReport) }
+
 // Setting up Integration Tests
 task integTest(type: RestIntegTestTask) {
     description = "Run tests against a cluster"
@@ -247,5 +265,37 @@ testClusters.integTest {
             node.jvmArgs("-agentlib:jdwp=transport=dt_socket,server=n,suspend=y,address=${debugPort}")
             debugPort += 1
         }
+    }
+}
+
+ext.createDiffFile = { ->
+    def file = Files.createTempFile(URLEncoder.encode(project.name, 'UTF-8'), '.diff').toFile()
+    def diffBase = 'refs/remotes/origin/main'
+    // Only run locally
+    if (!System.getenv('CI')) {
+        file.withOutputStream { out ->
+            exec {
+                commandLine 'git', 'diff', '--no-color', '--minimal', diffBase
+                standardOutput = out
+            }
+        }
+    }
+    return file
+}
+
+diffCoverageReport {
+    afterEvaluate {
+        diffSource.file = createDiffFile()
+    }
+
+    // View report at build/reports/jacoco/diffCoverage/html/index.html
+    reports {
+        html = true
+    }
+
+    violationRules {
+        minBranches = 0.00
+        minLines = 0.00
+        failOnViolation = true
     }
 }
