@@ -45,12 +45,6 @@ jobs:
           chown -R 1000:1000 `pwd`
           su `id -un 1000` -c "./gradlew check"
 
-      - name: Upload Coverage Report
-        if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-
   Check-ubi-windows:
     strategy:
       matrix:
@@ -125,6 +119,6 @@ jobs:
           name: coverage-report-${{ matrix.os }}-${{ matrix.java }}
           path: ./
       - name: Upload Coverage Report
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
