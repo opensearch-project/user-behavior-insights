@@ -12,4 +12,7 @@ build
 build-idea/
 out/
 
+# vscode files
+.vscode/
+
 volumes/
