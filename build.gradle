@@ -91,6 +91,12 @@ dependencies {
 
     yamlRestTestImplementation("org.opensearch:opensearch-agent-bootstrap:${opensearch_version}")
     yamlRestTestImplementation "org.apache.logging.log4j:log4j-core:${versions.log4j}"
+
+    configurations.all {
+        resolutionStrategy {
+            force("com.google.errorprone:error_prone_annotations:2.41.0") // Fix version conflict
+        }
+    }
 }
 
 test {
