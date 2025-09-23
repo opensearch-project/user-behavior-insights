@@ -14,9 +14,16 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The UBI settings.
+ * Utility class for UBI settings.
  */
 public class UbiSettings {
+
+    /**
+     * Private constructor to prevent instantiation as this is a utility class with static methods.
+     */
+    private UbiSettings() {
+        // Private constructor to prevent instantiation
+    }
 
     /**
      * The name of the Data Prepper http_source URL for receiving queries.
