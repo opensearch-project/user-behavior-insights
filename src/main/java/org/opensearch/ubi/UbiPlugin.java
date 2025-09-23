@@ -49,10 +49,22 @@ import static java.util.Collections.singletonList;
  */
 public class UbiPlugin extends Plugin implements ActionPlugin, SearchPlugin, TelemetryAwarePlugin {
 
+    /**
+     * The index name used for storing User Behavior Insights queries data.
+     */
     public static final String UBI_QUERIES_INDEX = "ubi_queries";
+    /**
+     * The index name used for storing User Behavior Insights events data.
+     */
     public static final String UBI_EVENTS_INDEX = "ubi_events";
 
+    /**
+     * Path to the JSON file containing the mapping configuration for the events index.
+     */
     public static final String EVENTS_MAPPING_FILE = "/events-mapping.json";
+    /**
+     * Path to the JSON file containing the mapping configuration for the queries index.
+     */
     public static final String QUERIES_MAPPING_FILE = "/queries-mapping.json";
 
     private ActionFilter ubiActionFilter;

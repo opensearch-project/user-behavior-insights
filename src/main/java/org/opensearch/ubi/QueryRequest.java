@@ -40,6 +40,7 @@ public class QueryRequest {
      * @param userQuery The user-entered query.
      * @param clientId The ID of the client that initiated the query.
      * @param query The raw query.
+     * @param application The application that initiated the query.
      * @param queryAttributes An optional map of additional attributes for the query.
      * @param queryResponse The {@link QueryResponse} for this query request.
      */
