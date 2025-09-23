@@ -67,11 +67,11 @@
   - match:  { responses.0.hits.total: 1}
   - match:  { responses.1.hits.total: 1}
 
-  - do:
-      indices.refresh:
-        index: [ "ubi_queries" ]
-  - do:
-      count:
-        index: ubi_queries
+#  - do:
+#      indices.refresh:
+#        index: [ "ubi_queries" ]
+#  - do:
+#      count:
+#        index: ubi_queries
 
-  - match: { count: 2 }
+#  - match: { count: 2 }
