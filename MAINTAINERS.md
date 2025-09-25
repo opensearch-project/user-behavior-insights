@@ -12,7 +12,8 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | ------------------ | --------------------------------------------------------- | ----------- |
 | Eric Pugh | [epugh](https://github.com/epugh)                       | OpenSource Connections |
 | Jeff Zemerick | [jzonthemtn](https://github.com/jzonthemtn)                           | Mountain Fog |
-| Michael Froh | [msfroh](https://github.com/msfroh)                   | Amazon      |
+| Michael Froh | [msfroh](https://github.com/msfroh)                   | Uber      |
+| Scott Stults | [sstults](https://github.com/sstults)                   | OpenSource Connections      |
 
 ## Emeritus
 
