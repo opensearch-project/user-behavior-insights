@@ -41,11 +41,13 @@ public class UbiParametersExtBuilderTests extends OpenSearchTestCase {
     }
 
     public void testParse() throws IOException {
-        XContentParser xcParser = mock(XContentParser.class);
-        when(xcParser.nextToken()).thenReturn(XContentParser.Token.START_OBJECT).thenReturn(XContentParser.Token.END_OBJECT);
-        UbiParametersExtBuilder builder = UbiParametersExtBuilder.parse(xcParser);
-        assertNotNull(builder);
-        assertNotNull(builder.getParams());
+        XContentType xContentType = randomFrom(XContentType.values());
+        org.opensearch.core.xcontent.XContentBuilder builder = org.opensearch.core.xcontent.XContentBuilder.builder(xContentType.xContent());
+        builder.startObject().endObject();
+        XContentParser parser = createParser(xContentType.xContent(), BytesReference.bytes(builder));
+        UbiParametersExtBuilder ext = UbiParametersExtBuilder.parse(parser);
+        assertNotNull(ext);
+        assertNotNull(ext.getParams());
     }
 
     public void testXContentRoundTrip() throws IOException {
@@ -59,7 +61,7 @@ public class UbiParametersExtBuilderTests extends OpenSearchTestCase {
         assertEquals(extBuilder, deserialized);
         UbiParameters parameters = deserialized.getParams();
         assertEquals("query_id", parameters.getQueryId());
-        assertEquals("user_query", parameters.getUserQuery());
+        assertEquals("user_query", parameters.getUserQueryText());
         assertEquals("client_id", parameters.getClientId());
         assertEquals("app", parameters.getApplication());
         assertEquals("object_id_field", parameters.getObjectIdField());
@@ -86,7 +88,7 @@ public class UbiParametersExtBuilderTests extends OpenSearchTestCase {
         assertEquals(extBuilder, deserialized);
         UbiParameters parameters = deserialized.getParams();
         assertEquals("query_id", parameters.getQueryId());
-        assertEquals("user_query", parameters.getUserQuery());
+        assertEquals("user_query", parameters.getUserQueryText());
         assertEquals("client_id", parameters.getClientId());
         assertEquals("app", parameters.getApplication());
         assertEquals("object_id_field", parameters.getObjectIdField());

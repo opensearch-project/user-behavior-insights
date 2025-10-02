@@ -42,7 +42,6 @@ public class UbiParameters implements Writeable, ToXContentObject {
     static {
         PARSER = new ObjectParser<>(UbiParametersExtBuilder.UBI_PARAMETER_NAME, UbiParameters::new);
         PARSER.declareString(UbiParameters::setQueryId, QUERY_ID);
-        PARSER.declareString(UbiParameters::setUserQuery, USER_QUERY);
         PARSER.declareString(UbiParameters::setClientId, CLIENT_ID);
         PARSER.declareString(UbiParameters::setApplication, APPLICATION);
         PARSER.declareString(UbiParameters::setObjectIdField, OBJECT_ID_FIELD);
@@ -78,7 +77,7 @@ public class UbiParameters implements Writeable, ToXContentObject {
     }
 
     private String queryId;
-    private String userQuery;
+    private Map<String, String> userQuery;
     private String clientId;
     private String application;
     private String objectIdField;
@@ -97,7 +96,7 @@ public class UbiParameters implements Writeable, ToXContentObject {
     @SuppressWarnings("unchecked")
     public UbiParameters(StreamInput input) throws IOException {
         this.queryId = input.readString();
-        this.userQuery = input.readOptionalString();
+        this.userQuery = (Map<String, String>) input.readGenericValue();
         this.clientId = input.readOptionalString();
         this.application = input.readOptionalString();
         this.objectIdField = input.readOptionalString();
@@ -114,6 +113,18 @@ public class UbiParameters implements Writeable, ToXContentObject {
      * @param queryAttributes Optional attributes for UBI.
      */
     public UbiParameters(String queryId, String userQuery, String clientId, String application, String objectIdField, Map<String, String> queryAttributes) {
+        this.queryId = queryId;
+        if (userQuery != null) {
+            this.userQuery = new HashMap<>();
+            this.userQuery.put("text", userQuery);
+        }
+        this.clientId = clientId;
+        this.application = application;
+        this.objectIdField = objectIdField;
+        this.queryAttributes = queryAttributes;
+    }
+
+    public UbiParameters(String queryId, Map<String, String> userQuery, String clientId, String application, String objectIdField, Map<String, String> queryAttributes) {
         this.queryId = queryId;
         this.userQuery = userQuery;
         this.clientId = clientId;
@@ -136,7 +147,7 @@ public class UbiParameters implements Writeable, ToXContentObject {
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeString(getQueryId());
-        out.writeOptionalString(userQuery);
+        out.writeGenericValue(userQuery);
         out.writeOptionalString(clientId);
         out.writeOptionalString(application);
         out.writeOptionalString(objectIdField);
@@ -150,7 +161,54 @@ public class UbiParameters implements Writeable, ToXContentObject {
      * @throws IOException Thrown if the parameters cannot be read.
      */
     public static UbiParameters parse(XContentParser parser) throws IOException {
-        return PARSER.parse(parser, null);
+        String queryId = null;
+        Map<String, String> userQuery = null;
+        String clientId = null;
+        String application = null;
+        String objectIdField = null;
+        Map<String, String> queryAttributes = null;
+
+        if (parser.currentToken() == null) {
+            parser.nextToken();
+        }
+        if (parser.currentToken() != XContentParser.Token.START_OBJECT) {
+            throw new IOException("Expected START_OBJECT for UBI parameters");
+        }
+        while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
+            String fieldName = parser.currentName();
+            XContentParser.Token token = parser.nextToken();
+            if (QUERY_ID.match(fieldName, parser.getDeprecationHandler())) {
+                queryId = parser.text();
+            } else if (USER_QUERY.match(fieldName, parser.getDeprecationHandler())) {
+                if (token == XContentParser.Token.START_OBJECT) {
+                    userQuery = parser.mapStrings();
+                } else if (token == XContentParser.Token.VALUE_STRING) {
+                    userQuery = new HashMap<>();
+                    userQuery.put("text", parser.text());
+                } else if (token == XContentParser.Token.VALUE_NULL) {
+                    userQuery = null;
+                } else {
+                    throw new IOException("Unsupported token for user_query: " + token);
+                }
+            } else if (CLIENT_ID.match(fieldName, parser.getDeprecationHandler())) {
+                clientId = token == XContentParser.Token.VALUE_NULL ? null : parser.text();
+            } else if (APPLICATION.match(fieldName, parser.getDeprecationHandler())) {
+                application = token == XContentParser.Token.VALUE_NULL ? null : parser.text();
+            } else if (OBJECT_ID_FIELD.match(fieldName, parser.getDeprecationHandler())) {
+                objectIdField = token == XContentParser.Token.VALUE_NULL ? null : parser.text();
+            } else if (QUERY_ATTRIBUTES.match(fieldName, parser.getDeprecationHandler())) {
+                if (token == XContentParser.Token.START_OBJECT) {
+                    queryAttributes = parser.mapStrings();
+                } else if (token == XContentParser.Token.VALUE_NULL) {
+                    queryAttributes = null;
+                } else {
+                    throw new IOException("Unsupported token for query_attributes: " + token);
+                }
+            } else {
+                parser.skipChildren();
+            }
+        }
+        return new UbiParameters(queryId, userQuery, clientId, application, objectIdField, queryAttributes);
     }
 
     @Override
@@ -244,19 +302,47 @@ public class UbiParameters implements Writeable, ToXContentObject {
     }
 
     /**
-     * Get the user query.
-     * @return The user query.
+     * Get the user query map.
+     * @return The user query map.
      */
-    public String getUserQuery() {
+    public Map<String, String> getUserQuery() {
+        if (userQuery == null) {
+            userQuery = new HashMap<>();
+        }
         return userQuery;
     }
 
     /**
-     * Set the user query.
-     * @param userQuery The user query.
+     * Convenience accessor for the user query text value.
+     * @return The user query "text" value or empty string if not present.
      */
-    public void setUserQuery(String userQuery) {
+    public String getUserQueryText() {
+        return userQuery != null ? userQuery.getOrDefault("text", "") : "";
+    }
+
+    /**
+     * Set the user query map.
+     * @param userQuery The user query map.
+     */
+    public void setUserQuery(Map<String, String> userQuery) {
         this.userQuery = userQuery;
+    }
+
+    /**
+     * Set a legacy string user query; wraps to {"text": {@literal <value>}}.
+     * @param userQuery The legacy user query string.
+     */
+    public void setLegacyUserQuery(String userQuery) {
+        if (userQuery == null) {
+            this.userQuery = null;
+        } else {
+            if (this.userQuery == null) {
+                this.userQuery = new HashMap<>();
+            } else {
+                this.userQuery.clear();
+            }
+            this.userQuery.put("text", userQuery);
+        }
     }
 
     /**
