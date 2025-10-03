@@ -310,13 +310,16 @@ def convert_to_ndjson(gen_config, queries, events):
     return data
 
 
+def wrap_user_query(uq):
+    return {"text": uq} if isinstance(uq, str) else uq
+
 def make_query_event(gen_config, row):
     response_id = str(uuid.uuid4())
     query_event = {
         "application": gen_config.application,
         "query_id": row["query_id"],
         "client_id": row["client_id"],
-        "user_query": row["user_query"],
+        "user_query": wrap_user_query(row["user_query"]),
         "query_attributes": {},
         "timestamp": row["timestamp"],
     }
@@ -331,7 +334,7 @@ def make_ubi_event(gen_config, row):
         "session_id": row["session_id"],
         "client_id": row["client_id"],
         "timestamp": row["timestamp"],
-        "user_query": row["user_query"],
+        "user_query": wrap_user_query(row["user_query"]),
         "message_type": None,
         "message": None,
         "event_attributes": {

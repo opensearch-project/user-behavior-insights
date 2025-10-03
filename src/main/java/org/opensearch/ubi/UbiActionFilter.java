@@ -129,7 +129,7 @@ public class UbiActionFilter implements ActionFilter {
             if (ubiParameters != null) {
 
                 final String queryId = ubiParameters.getQueryId();
-                final String userQuery = ubiParameters.getUserQuery();
+                final Map<String, String> userQuery = ubiParameters.getUserQuery();
                 final String userId = ubiParameters.getClientId();
                 final String objectIdField = ubiParameters.getObjectIdField();
                 final String application = ubiParameters.getApplication();
@@ -263,7 +263,10 @@ public class UbiActionFilter implements ActionFilter {
 
         span.addAttribute("ubi.user_id", queryRequest.getQueryId());
         span.addAttribute("ubi.query", queryRequest.getQuery());
-        span.addAttribute("ubi.user_query", queryRequest.getUserQuery());
+        span.addAttribute("ubi.user_query", queryRequest.getUserQueryText());
+        for (final Map.Entry<String, String> e : queryRequest.getUserQuery().entrySet()) {
+            span.addAttribute("ubi.user_query." + e.getKey(), e.getValue());
+        }
         span.addAttribute("ubi.client_id", queryRequest.getClientId());
         span.addAttribute("ubi.timestamp", queryRequest.getTimestamp());
 

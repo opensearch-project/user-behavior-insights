@@ -6,7 +6,7 @@
     "query": { "type": "text" },
     "query_response_id": { "type": "keyword", "ignore_above": 100 },
     "query_response_hit_ids": { "type": "keyword" },
-    "user_query":  { "type": "keyword" },
+    "user_query":  { "type": "flat_object" },
     "query_attributes": { "type": "flat_object" },
     "client_id": { "type": "keyword", "ignore_above": 100 },
     "application":  { "type":  "keyword", "ignore_above": 100 }

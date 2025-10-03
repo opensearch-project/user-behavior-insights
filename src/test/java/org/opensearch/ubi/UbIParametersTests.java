@@ -10,6 +10,7 @@ package org.opensearch.ubi;
 
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.core.common.io.stream.StreamOutput;
+import org.opensearch.common.io.stream.BytesStreamOutput;
 import org.opensearch.core.xcontent.XContent;
 import org.opensearch.core.xcontent.XContentBuilder;
 import org.opensearch.core.xcontent.XContentGenerator;
@@ -91,14 +92,14 @@ public class UbIParametersTests extends OpenSearchTestCase {
 
     public void testWriteTo() throws IOException {
         final UbiParameters params = new UbiParameters("query_id", "user_query", "client_id", "app", "object_id", Collections.emptyMap());
-        StreamOutput output = new DummyStreamOutput();
-        params.writeTo(output);
-        List<String> actual = ((DummyStreamOutput) output).getList();
-        assertEquals("query_id", actual.get(0));
-        assertEquals("user_query", actual.get(1));
-        assertEquals("client_id", actual.get(2));
-        assertEquals("app", actual.get(3));
-        assertEquals("object_id", actual.get(4));
+        BytesStreamOutput bso = new BytesStreamOutput();
+        params.writeTo(bso);
+        UbiParameters roundTrip = new UbiParameters(bso.bytes().streamInput());
+        assertEquals("query_id", roundTrip.getQueryId());
+        assertEquals("user_query", roundTrip.getUserQueryText());
+        assertEquals("client_id", roundTrip.getClientId());
+        assertEquals("app", roundTrip.getApplication());
+        assertEquals("object_id", roundTrip.getObjectIdField());
     }
 
     public void testToXContent() throws IOException {
