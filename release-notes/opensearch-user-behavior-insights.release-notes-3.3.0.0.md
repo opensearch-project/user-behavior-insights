@@ -1,3 +1,10 @@
+## Version 3.3.0 Release Notes
 
+Compatible with OpenSearch and OpenSearch Dashboards version 3.3.0
 
-I don't see any content in the "Unreleased" section of the changelog that would be relevant for version 3.3.0 release notes. The "Unreleased" section contains only category headers but no actual changes or pull request links.
+### Maintenance
+* Increment version to 3.3.0-SNAPSHOT ([#127](https://github.com/opensearch-project/user-behavior-insights/pull/127))
+
+### Bug Fixes
+* fix dependencies ([#128](https://github.com/opensearch-project/user-behavior-insights/pull/128))
+* fix: Update System.env syntax for Gradle 9 compatibility ([#122](https://github.com/opensearch-project/user-behavior-insights/pull/122))
