@@ -26,7 +26,7 @@ public class QueryRequest {
     private final String timestamp;
     private final String queryId;
     private final String clientId;
-    private final String userQuery;
+    private final Map<String, String> userQuery;
     private final String query;
     private final String application;
     private final Map<String, String> queryAttributes;
@@ -44,7 +44,7 @@ public class QueryRequest {
      * @param queryAttributes An optional map of additional attributes for the query.
      * @param queryResponse The {@link QueryResponse} for this query request.
      */
-    public QueryRequest(final String queryId, final String userQuery, final String clientId, final String query,
+    public QueryRequest(final String queryId, final Map<String, String> userQuery, final String clientId, final String query,
                         final String application, final Map<String, String> queryAttributes,
                         final QueryResponse queryResponse) {
 
@@ -109,14 +109,22 @@ public class QueryRequest {
     }
 
     /**
-     * Gets the user query.
-     * @return The user query.
+     * Gets the user query map.
+     * @return The user query map.
      */
-    public String getUserQuery() {
-        if(userQuery == null) {
+    public Map<String, String> getUserQuery() {
+        return userQuery;
+    }
+
+    /**
+     * Gets the user query text (convenience accessor).
+     * @return The "text" value of user_query or empty string if missing.
+     */
+    public String getUserQueryText() {
+        if (userQuery == null) {
             return "";
         }
-        return userQuery;
+        return userQuery.getOrDefault("text", "");
     }
 
     /**
