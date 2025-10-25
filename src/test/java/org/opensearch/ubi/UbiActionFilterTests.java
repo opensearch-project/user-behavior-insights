@@ -14,6 +14,7 @@ import org.opensearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.action.support.ActionFilterChain;
+import org.opensearch.action.support.ActionRequestMetadata;
 import org.opensearch.common.action.ActionFuture;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.common.unit.TimeValue;
@@ -98,7 +99,7 @@ public class UbiActionFilterTests extends OpenSearchTestCase {
 
         when(request.source()).thenReturn(searchSourceBuilder);
 
-        ubiActionFilter.apply(task, "ubi", request, listener, chain);
+        ubiActionFilter.apply(task, "ubi", request, ActionRequestMetadata.empty(), listener, chain);
 
         verify(client, never()).index(any(), any());
 
@@ -157,7 +158,7 @@ public class UbiActionFilterTests extends OpenSearchTestCase {
 
         when(request.source()).thenReturn(searchSourceBuilder);
 
-        ubiActionFilter.apply(task, "ubi", request, listener, chain);
+        ubiActionFilter.apply(task, "ubi", request, ActionRequestMetadata.empty(), listener, chain);
 
         verify(client, atMostOnce()).index(any(), any());
 
