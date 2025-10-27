@@ -305,6 +305,10 @@ diffCoverageReport {
     }
 }
 
+run {
+    useCluster testClusters.integTest
+}
+
 // updateVersion: Task to auto update version to the next development iteration
 task updateVersion {
     onlyIf { System.getProperty('newVersion') }
