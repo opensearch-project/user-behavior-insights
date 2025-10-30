@@ -35,7 +35,7 @@ forbiddenApisTest.enabled = false
 
 buildscript {
     ext {
-        opensearch_version = System.getProperty("opensearch.version", "3.3.0-SNAPSHOT")
+        opensearch_version = System.getProperty("opensearch.version", "3.4.0-SNAPSHOT")
         buildVersionQualifier = System.getProperty("build.version_qualifier", "")
         isSnapshot = "true" == System.getProperty("build.snapshot", "true")
         version_tokens = opensearch_version.tokenize('-')
@@ -54,7 +54,7 @@ buildscript {
 
     repositories {
         mavenLocal()
-        maven { url "https://central.sonatype.com/repository/maven-snapshots/" }
+        maven { url "https://ci.opensearch.org/ci/dbc/snapshots/maven/" }
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url 'https://jitpack.io' }
@@ -68,8 +68,7 @@ buildscript {
 
 repositories {
     mavenLocal()
-    maven { url "https://central.sonatype.com/repository/maven-snapshots/" }
-    maven { url "https://aws.oss.sonatype.org/content/repositories/snapshots" }
+    maven { url "https://ci.opensearch.org/ci/dbc/snapshots/maven/" }
     mavenCentral()
     maven { url "https://plugins.gradle.org/m2/" }
 }
@@ -126,10 +125,11 @@ publishing {
     repositories {
         maven {
             name = "Snapshots"
-            url = "https://central.sonatype.com/repository/maven-snapshots/"
-            credentials {
-                username "$System.env.SONATYPE_USERNAME"
-                password "$System.env.SONATYPE_PASSWORD"
+            url = System.getenv("MAVEN_SNAPSHOTS_S3_REPO")
+            credentials(AwsCredentials) {
+                accessKey = System.getenv("AWS_ACCESS_KEY_ID")
+                secretKey = System.getenv("AWS_SECRET_ACCESS_KEY")
+                sessionToken = System.getenv("AWS_SESSION_TOKEN")
             }
         }
         maven {
@@ -303,6 +303,10 @@ diffCoverageReport {
         minLines = 0.00
         failOnViolation = true
     }
+}
+
+run {
+    useCluster testClusters.integTest
 }
 
 // updateVersion: Task to auto update version to the next development iteration

@@ -11,12 +11,14 @@ UBI and this plugin project was originally proposed in the [OpenSearch UBI RFC](
 Please note that this repository is the implementation of the UBI plugin for OpenSearch.
 
 > [!IMPORTANT] 
-> This release targets to the 1.0.0 version of the UBI Specification.
+> This release targets to the 1.3.0 version of the UBI Specification.
 
 For details on the JSON Schema used by UBI to send and receive queries and events please see the [UBI](https://github.com/o19s/ubi) repository and the links below.
-* [Query Request Schema](https://o19s.github.io/ubi/docs/html/query.request.schema.html)
-* [Query Response Schema](https://o19s.github.io/ubi/docs/html/query.response.schema.html)
-* [Event Schema](https://o19s.github.io/ubi/docs/html/event.schema.html)
+* [Query Request Schema](https://o19s.github.io/ubi/docs/html/latest/query.request.schema.html)
+* [Query Response Schema](https://o19s.github.io/ubi/docs/html/latest/query.response.schema.html)
+* [Event Schema](https://o19s.github.io/ubi/docs/html/latest/event.schema.html)
+
+Visit [https://ubisearch.dev](https://ubisearch.dev) to learn more about UBI.
 
 ## UBI, Data Prepper, and Open Telemetry
 
@@ -34,7 +36,7 @@ The UBI plugin can store UBI query data in one of three ways:
 
 ## Useful Commands
 
-The `scripts/` directory contains example UBI requests for common use cases.
+The `src/test/scripts/` directory contains example UBI requests for common use cases.
 
 ## User Quick Start
 
@@ -43,7 +45,7 @@ The `scripts/` directory contains example UBI requests for common use cases.
 To get started, download the plugin zip file from the [releases](https://github.com/opensearch-project/user-behavior-insights/releases). Next, install the plugin into OpenSearch with the following command:
 
 ```
-bin/opensearch-plugin install file:/opensearch-ubi-2.18.0.0.zip
+bin/opensearch-plugin install file:/opensearch-ubi-3.2.0.0.zip
 ```
 
 You will be prompted while installing the plugin because the plugin defines additional security permissions. These permissions allow the plugin to serialize query requests to JSON for storing and to allow the plugin to send query requests to Data Prepper. You can skip the prompt by adding the `--batch` argument to the above command.

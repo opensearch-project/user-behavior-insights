@@ -23,6 +23,7 @@ import org.opensearch.action.search.SearchRequest;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.action.support.ActionFilter;
 import org.opensearch.action.support.ActionFilterChain;
+import org.opensearch.action.support.ActionRequestMetadata;
 import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.action.ActionResponse;
@@ -79,6 +80,7 @@ public class UbiActionFilter implements ActionFilter {
         Task task,
         String action,
         Request request,
+        ActionRequestMetadata<Request, Response> actionRequestMetadata,
         ActionListener<Response> listener,
         ActionFilterChain<Request, Response> chain
     ) {

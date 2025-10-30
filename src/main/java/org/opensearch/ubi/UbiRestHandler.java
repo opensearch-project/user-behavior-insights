@@ -35,6 +35,10 @@ import static org.opensearch.ubi.UbiPlugin.QUERIES_MAPPING_FILE;
 import static org.opensearch.ubi.UbiPlugin.UBI_EVENTS_INDEX;
 import static org.opensearch.ubi.UbiPlugin.UBI_QUERIES_INDEX;
 
+/**
+ * REST handler for User Behavior Insights Plugin operations.
+ * Provides endpoints for initializing UBI indices and mappings.
+ */
 public class UbiRestHandler extends BaseRestHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(UbiRestHandler.class);
@@ -43,6 +47,13 @@ public class UbiRestHandler extends BaseRestHandler {
      * URL for initializing the plugin and the index mappings.
      */
     public static final String INITIALIZE_URL = "/_plugins/ubi/initialize";
+    
+    /**
+     * Creates a new instance of {@link UbiRestHandler}.
+     */
+    public UbiRestHandler() {
+        // Default constructor
+    }
 
     @Override
     public String getName() {
