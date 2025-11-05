@@ -9,6 +9,8 @@
 
 set -ex
 
+export CI=true
+
 function usage() {
     echo "Usage: $0 [args]"
     echo ""
