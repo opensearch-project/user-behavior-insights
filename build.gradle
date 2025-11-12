@@ -9,7 +9,7 @@ apply plugin: 'opensearch.pluginzip'
 apply plugin: 'opensearch.yaml-rest-test'
 apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
-apply plugin: 'com.form.diff-coverage'
+
 
 ext.opensearch_tmp_dir = rootProject.file('build/private/opensearch_tmp').absoluteFile
 opensearch_tmp_dir.mkdirs()
@@ -62,8 +62,7 @@ buildscript {
 
     dependencies {
         classpath "org.opensearch.gradle:build-tools:${opensearch_version}"
-        classpath "com.github.form-com.diff-coverage-gradle:diff-coverage:0.9.5"
-    }    
+    }
 }
 
 repositories {
@@ -93,6 +92,7 @@ dependencies {
     configurations.all {
         resolutionStrategy {
             force("com.google.errorprone:error_prone_annotations:2.41.0") // Fix version conflict
+            force("io.projectreactor:reactor-core:3.8.0") // Fix reactor-core version conflict
         }
     }
 }
@@ -116,8 +116,10 @@ allprojects {
     }
 
     plugins.withId('java') {
-        targetCompatibility = JavaVersion.VERSION_21
-        sourceCompatibility = JavaVersion.VERSION_21
+        java {
+            targetCompatibility = JavaVersion.VERSION_21
+            sourceCompatibility = JavaVersion.VERSION_21
+        }
     }
 }
 
@@ -139,6 +141,7 @@ publishing {
     }
     publications {
         pluginZip(MavenPublication) { publication ->
+            artifact bundlePlugin
             pom {
                 name = "opensearch-ubi"
                 description = "OpenSearch User Behavior Insights plugin"
@@ -273,37 +276,7 @@ testClusters.integTest {
     }
 }
 
-ext.createDiffFile = { ->
-    def file = Files.createTempFile(URLEncoder.encode(project.name, 'UTF-8'), '.diff').toFile()
-    def diffBase = 'refs/remotes/origin/main'
-    // Only run locally
-    if (!System.getenv('CI')) {
-        file.withOutputStream { out ->
-            exec {
-                commandLine 'git', 'diff', '--no-color', '--minimal', diffBase
-                standardOutput = out
-            }
-        }
-    }
-    return file
-}
 
-diffCoverageReport {
-    afterEvaluate {
-        diffSource.file = createDiffFile()
-    }
-
-    // View report at build/reports/jacoco/diffCoverage/html/index.html
-    reports {
-        html = true
-    }
-
-    violationRules {
-        minBranches = 0.00
-        minLines = 0.00
-        failOnViolation = true
-    }
-}
 
 run {
     useCluster testClusters.integTest
