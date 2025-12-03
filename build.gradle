@@ -141,7 +141,6 @@ publishing {
     }
     publications {
         pluginZip(MavenPublication) { publication ->
-            artifact bundlePlugin
             pom {
                 name = "opensearch-ubi"
                 description = "OpenSearch User Behavior Insights plugin"
