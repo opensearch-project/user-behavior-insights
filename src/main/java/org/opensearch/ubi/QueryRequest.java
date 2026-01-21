@@ -11,8 +11,7 @@ package org.opensearch.ubi;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -64,13 +63,12 @@ public class QueryRequest {
 
         final ObjectMapper objectMapper = new ObjectMapper();
 
-        final String json = AccessController.doPrivileged((PrivilegedAction<String>) () -> {
-            try {
-                return objectMapper.writeValueAsString(this);
-            } catch (JsonProcessingException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+        final String json;
+        try {
+            json = objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException ex) {
+            throw new RuntimeException(ex);
+        }
 
         return "[" + json + "]";
 
