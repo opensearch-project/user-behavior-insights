@@ -77,7 +77,7 @@ thirdPartyAudit.enabled = false
 dependencies {
     runtimeOnly "org.apache.logging.log4j:log4j-core:${versions.log4j}"
     api "com.fasterxml.jackson.core:jackson-core:${versions.jackson}"
-    api "com.fasterxml.jackson.core:jackson-annotations:${versions.jackson}"
+    api "com.fasterxml.jackson.core:jackson-annotations:${versions.jackson_annotations}"
     api "com.fasterxml.jackson.core:jackson-databind:${versions.jackson_databind}"
     api "org.apache.httpcomponents:httpcore:${versions.httpcore}"
     api "org.apache.httpcomponents:httpclient:${versions.httpclient}"
