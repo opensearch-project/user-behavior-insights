@@ -1,14 +1,14 @@
 name: "Changelog Verifier"
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
+    types: [edited, labeled, opened, ready_for_review, reopened, review_requested, synchronize, unlabeled]
 
 jobs:
   # Enforces the update of a changelog file on every pull request
   verify-changelog:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ github.event.pull_request.head.sha }}
