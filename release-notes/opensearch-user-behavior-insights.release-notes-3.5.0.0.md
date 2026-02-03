@@ -3,4 +3,5 @@
 Compatible with OpenSearch and OpenSearch Dashboards version 3.5.0
 
 ### Maintenance
-* Increment version to 3.5.0-SNAPSHOT ([#156](https://github.com/opensearch-project/user-behavior-insights/pull/156))
+* Add release notes for 3.5 release ([#160](https://github.com/opensearch-project/user-behavior-insights/pull/160))
+* Add changelog verifier for UBI plugin ([#159](https://github.com/opensearch-project/user-behavior-insights/pull/159))
