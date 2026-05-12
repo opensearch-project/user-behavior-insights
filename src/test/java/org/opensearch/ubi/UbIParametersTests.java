@@ -9,24 +9,19 @@
 package org.opensearch.ubi;
 
 import org.opensearch.action.search.SearchRequest;
+import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.core.common.io.stream.StreamOutput;
-import org.opensearch.core.xcontent.XContent;
 import org.opensearch.core.xcontent.XContentBuilder;
-import org.opensearch.core.xcontent.XContentGenerator;
+import org.opensearch.core.xcontent.XContentParser;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.test.OpenSearchTestCase;
 import org.opensearch.ubi.ext.UbiParameters;
 import org.opensearch.ubi.ext.UbiParametersExtBuilder;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class UbIParametersTests extends OpenSearchTestCase {
 
@@ -103,22 +98,24 @@ public class UbIParametersTests extends OpenSearchTestCase {
 
     public void testToXContent() throws IOException {
         final UbiParameters params = new UbiParameters("query_id", "user_query", "client_id", "app", "object_id", Collections.emptyMap());
-        XContent xc = mock(XContent.class);
-        OutputStream os = mock(OutputStream.class);
-        XContentGenerator generator = mock(XContentGenerator.class);
-        when(xc.createGenerator(any(), any(), any())).thenReturn(generator);
-        XContentBuilder builder = new XContentBuilder(xc, os);
-        assertNotNull(params.toXContent(builder, null));
+        final UbiParameters roundtripped = serializeAndParse(params);
+        assertEquals(params, roundtripped);
     }
 
     public void testToXContentAllOptionalParameters() throws IOException {
         final UbiParameters params = new UbiParameters("query_id", "user_query", "client_id", "app", "object_id", Collections.emptyMap());
-        XContent xc = mock(XContent.class);
-        OutputStream os = mock(OutputStream.class);
-        XContentGenerator generator = mock(XContentGenerator.class);
-        when(xc.createGenerator(any(), any(), any())).thenReturn(generator);
-        XContentBuilder builder = new XContentBuilder(xc, os);
-        assertNotNull(params.toXContent(builder, null));
+        final UbiParameters roundtripped = serializeAndParse(params);
+        assertEquals(params, roundtripped);
+    }
+
+    private UbiParameters serializeAndParse(UbiParameters params) throws IOException {
+        final XContentBuilder builder = JsonXContent.contentBuilder();
+        builder.startObject();
+        params.toXContent(builder, null);
+        builder.endObject();
+        try (XContentParser parser = createParser(JsonXContent.jsonXContent, builder.toString())) {
+            return UbiParameters.parse(parser);
+        }
     }
 
 }
