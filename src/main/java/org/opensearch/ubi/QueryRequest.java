@@ -12,8 +12,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Map;
 
@@ -31,7 +31,7 @@ public class QueryRequest {
     private final Map<String, String> queryAttributes;
     private final QueryResponse queryResponse;
 
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
 
     /**
      * Creates a query request.
@@ -47,7 +47,7 @@ public class QueryRequest {
                         final String application, final Map<String, String> queryAttributes,
                         final QueryResponse queryResponse) {
 
-        this.timestamp = sdf.format(new Date());
+        this.timestamp = ZonedDateTime.now().format(FORMATTER);
         this.queryId = queryId;
         this.clientId = clientId;
         this.userQuery = userQuery;
