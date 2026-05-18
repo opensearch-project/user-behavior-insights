@@ -12,7 +12,7 @@ jobs:
     with:
       product: opensearch
 
-  Gradle Check Linux:
+  gradle-check-linux:
     needs: Get-CI-Image-Tag
     strategy:
       matrix:
@@ -45,7 +45,7 @@ jobs:
           chown -R 1000:1000 `pwd`
           su `id -un 1000` -c "./gradlew check"
 
-  Gradle Check Windows:
+  gradle-check-windows:
     strategy:
       matrix:
         java: [21, 25]
@@ -67,7 +67,7 @@ jobs:
         run: |
           ./gradlew check
 
-  Pre-commit Linux:
+  pre-commit-linux:
     needs: Get-CI-Image-Tag
     strategy:
       matrix:
@@ -107,7 +107,7 @@ jobs:
           path: ./jacocoTestReport.xml
 
   Precommit-codecov:
-    needs: Precommit-ubi-linux
+    needs: pre-commit-linux
     strategy:
       matrix:
         java: [21, 25]
