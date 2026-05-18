@@ -8,8 +8,8 @@
 
 package org.opensearch.ubi;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 
 import java.time.ZonedDateTime;
@@ -66,7 +66,7 @@ public class QueryRequest {
         final String json;
         try {
             json = objectMapper.writeValueAsString(this);
-        } catch (JsonProcessingException ex) {
+        } catch (JacksonException ex) {
             throw new RuntimeException(ex);
         }
 

@@ -42,11 +42,8 @@ services:
         soft: 65536
         hard: 65536
     ports:
-      - 9200:9200
-      - 9600:9600
-    expose:
-      - 9200
-      - 9600
+      - "9200:9200"
+      - "9600:9600"
     networks:
       - ubi-dev-os-net
 
