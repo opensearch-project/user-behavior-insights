@@ -12,7 +12,7 @@ jobs:
     with:
       product: opensearch
 
-  Check-ubi-linux:
+  Gradle Check Linux:
     needs: Get-CI-Image-Tag
     strategy:
       matrix:
@@ -45,7 +45,7 @@ jobs:
           chown -R 1000:1000 `pwd`
           su `id -un 1000` -c "./gradlew check"
 
-  Check-ubi-windows:
+  Gradle Check Windows:
     strategy:
       matrix:
         java: [21, 25]
@@ -67,7 +67,7 @@ jobs:
         run: |
           ./gradlew check
 
-  Precommit-ubi-linux:
+  Pre-commit Linux:
     needs: Get-CI-Image-Tag
     strategy:
       matrix:
