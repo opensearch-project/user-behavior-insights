@@ -84,7 +84,6 @@ dependencies {
     api "org.apache.httpcomponents:httpcore:${versions.httpcore}"
     api "org.apache.httpcomponents:httpclient:${versions.httpclient}"
     api "commons-logging:commons-logging:${versions.commonslogging}"
-    zipArchive group: 'org.opensearch.plugin', name:'opensearch-job-scheduler', version: "${opensearch_build}"
 
     testImplementation("org.opensearch:opensearch-agent-bootstrap:${opensearch_version}")
 
