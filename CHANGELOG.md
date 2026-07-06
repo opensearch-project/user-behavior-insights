@@ -19,6 +19,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Documentation
 
 ### Maintenance
+- Bump OpenSearch to 3.8.0-SNAPSHOT. Also updates Jackson to 3.2.0. ([#191](https://github.com/opensearch-project/user-behavior-insights/pull/191))
 - Bump OpenSearch to 3.7.0-SNAPSHOT. ([#179](https://github.com/opensearch-project/user-behavior-insights/pull/179))
 - Update Jackson to 3.1.2. ([#174](https://github.com/opensearch-project/user-behavior-insights/pull/174))
 - Upgrade Gradle wrapper from 9.2.0 to 9.4.1. ([#180](https://github.com/opensearch-project/user-behavior-insights/pull/180))
