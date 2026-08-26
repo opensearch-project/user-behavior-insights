@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+# Copyright OpenSearch Contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # An example multi search UBI search of the ecommerce index.
 
 curl -s -X GET "http://localhost:9200/_msearch" -H 'Content-Type: application/json' -d'
