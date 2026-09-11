@@ -1,5 +1,7 @@
 # OpenSearch User Behavior Insights
 
+[![codecov](https://codecov.io/gh/opensearch-project/user-behavior-insights/branch/main/graph/badge.svg)](https://codecov.io/gh/opensearch-project/user-behavior-insights)
+
 This repository contains the OpenSearch plugin for the User Behavior Insights (UBI) capability. This plugin
 facilitates persisting client-side events (e.g. item clicks, scroll depth) and OpenSearch queries for the purpose of analyzing the data
 to improve search relevance and user experience.
