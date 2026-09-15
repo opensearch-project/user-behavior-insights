@@ -1,3 +1,6 @@
+# Copyright OpenSearch Contributors
+# SPDX-License-Identifier: Apache-2.0
+
 
 # Ansi color code variables
 ERROR='\033[0;31m'
