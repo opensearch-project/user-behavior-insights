@@ -35,7 +35,7 @@ forbiddenApisTest.enabled = false
 
 buildscript {
     ext {
-        opensearch_version = System.getProperty("opensearch.version", "3.9.0-SNAPSHOT")
+        opensearch_version = System.getProperty("opensearch.version", "3.10.0-SNAPSHOT")
         buildVersionQualifier = System.getProperty("build.version_qualifier", "")
         isSnapshot = "true" == System.getProperty("build.snapshot", "true")
         version_tokens = opensearch_version.tokenize('-')
@@ -96,6 +96,7 @@ dependencies {
         resolutionStrategy {
             force("com.google.errorprone:error_prone_annotations:2.41.0") // Fix version conflict
             force("io.projectreactor:reactor-core:3.8.0") // Fix reactor-core version conflict
+            force("org.jspecify:jspecify:1.0.1") // Fix jspecify version conflict between log4j and OpenSearch core
         }
     }
 }
