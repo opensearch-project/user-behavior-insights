@@ -14,6 +14,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Replace non-thread-safe `SimpleDateFormat` with `DateTimeFormatter` in `QueryRequest` timestamp generation. ([#180](https://github.com/opensearch-project/user-behavior-insights/pull/179))
 
 ### Infrastructure
+- Add SPDX license header checker and missing headers ([#207](https://github.com/opensearch-project/user-behavior-insights/pull/207))
 - Rename CI workflow job IDs to valid identifiers (no spaces) so the workflow validates, while preserving display names that match branch-protection rules. ([#179](https://github.com/opensearch-project/user-behavior-insights/pull/179))
 
 ### Documentation
