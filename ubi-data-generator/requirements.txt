@@ -1,6 +1,6 @@
 opensearch-py
 numpy
 pandas
-pyarrow
+pyarrow>=26.0.0
 rich
 tqdm
