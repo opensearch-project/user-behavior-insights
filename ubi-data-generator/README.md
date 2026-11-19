@@ -13,6 +13,8 @@ We plan to release additional click models in the future.
 
 ## Installation
 
+The script requires Python 3.11 or later.
+
 ```
 pip install -r requirements.txt
 ```
